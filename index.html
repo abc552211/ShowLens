@@ -20,7 +20,7 @@
             padding-bottom: 40px;
         }
 
-        /* 頂層頂部欄 - 莫蘭迪綠系列 */
+        /* 頂層頂部欄 */
         .top-header {
             background: linear-gradient(135deg, #5e7e6b, #7a9a88);
             color: #ffffff;
@@ -91,7 +91,7 @@
 
         .inputs-row {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             align-items: center;
             flex-wrap: wrap;
         }
@@ -109,7 +109,7 @@
         }
 
         .inline-input-group input {
-            width: 65px;
+            width: 60px;
             padding: 6px 8px;
             border: 1px solid #ced6d2;
             border-radius: 6px;
@@ -132,7 +132,7 @@
             width: 1px;
             height: 24px;
             background-color: #ddd;
-            margin: 0 5px;
+            margin: 0 2px;
         }
 
         /* 實體尺校正區 */
@@ -144,6 +144,41 @@
             border-radius: 8px;
             border: 1px dashed #7a9a88;
             min-width: 320px;
+        }
+
+        /* 最佳原片建議區塊 */
+        .blank-recommendation {
+            background-color: #eef5f1;
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-top: 5px;
+            border: 1px solid #c8e0d1;
+            display: flex;
+            justify-content: space-around;
+            font-size: 14px;
+        }
+        
+        .blank-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .blank-label {
+            font-weight: 600;
+            color: #5e7e6b;
+            font-size: 12px;
+        }
+
+        .blank-value {
+            font-weight: 800;
+            color: #2c3531;
+            font-size: 16px;
+            background: #fff;
+            padding: 2px 10px;
+            border-radius: 12px;
+            border: 1px solid #d0ddd5;
         }
 
         /* 中間：兩側鏡片動態圖顯示區 */
@@ -276,7 +311,7 @@
             text-align: center;
         }
 
-        /* 漂亮滑桿樣式 */
+        /* 滑桿樣式 */
         input[type=range] {
             -webkit-appearance: none;
             width: 100%;
@@ -347,7 +382,7 @@
             border-color: #4a6b5d;
         }
 
-        /* 折射率專用網格切換 */
+        /* 折射率網格切換 */
         .index-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -413,7 +448,6 @@
 </head>
 <body>
 
-    <!-- 頂層標題列 -->
     <header class="top-header">
         <div class="header-title-area">
             <h1>大學南崁鏡片規劃軟體</h1>
@@ -425,7 +459,6 @@
         </div>
     </header>
 
-    <!-- 鏡框與瞳距共用參數設定欄 -->
     <section class="shared-frame-bar">
         <div class="frame-inputs-container">
             <div class="bar-section-title">
@@ -442,6 +475,16 @@
                     <label>DBL</label>
                     <input type="number" id="frameDBL" value="18" min="10" max="30" oninput="validateAndSync()">
                 </div>
+                <div class="inline-input-group">
+                    <label style="color:#2b6bb8;">B高</label>
+                    <input type="number" id="frameB" value="40" min="20" max="65" oninput="validateAndSync()">
+                </div>
+                
+                <!-- 新增 ED 有效直徑輸入 -->
+                <div class="inline-input-group">
+                    <label style="color:#e67e22;">ED</label>
+                    <input type="number" id="frameED" value="54" min="30" max="80" oninput="validateAndSync(true)">
+                </div>
                 
                 <div class="pd-separator"></div>
                 
@@ -453,17 +496,28 @@
                 <div class="pd-separator"></div>
                 
                 <div class="inline-input-group">
-                    <label style="color:#4a6b5d;">右 R.PD</label>
+                    <label style="color:#4a6b5d;">R.PD</label>
                     <input type="number" id="pdOD" value="32.0" min="20" max="45" step="0.5" oninput="updatePDSingle()">
                 </div>
                 <div class="inline-input-group">
-                    <label style="color:#617a72;">左 L.PD</label>
+                    <label style="color:#617a72;">L.PD</label>
                     <input type="number" id="pdOS" value="32.0" min="20" max="45" step="0.5" oninput="updatePDSingle()">
+                </div>
+            </div>
+            
+            <!-- 最佳原片建議區塊 -->
+            <div class="blank-recommendation">
+                <div class="blank-item">
+                    <span class="blank-label">右眼 OD 建議原片直徑</span>
+                    <span class="blank-value" id="blank-od">Ø 65 mm</span>
+                </div>
+                <div class="blank-item">
+                    <span class="blank-label">左眼 OS 建議原片直徑</span>
+                    <span class="blank-value" id="blank-os">Ø 65 mm</span>
                 </div>
             </div>
         </div>
 
-        <!-- 實體用尺校正工具 -->
         <div class="calibration-box">
             <div style="font-size:13px; font-weight:700; color:#4a6b5d; margin-bottom:4px;">📏 iPad 實體比例校正</div>
             <div style="font-size:12px; color:#555; margin-bottom:6px;">請將實體直尺貼齊螢幕，微調滑桿使下方 1cm 與直尺吻合：</div>
@@ -475,7 +529,6 @@
         </div>
     </section>
 
-    <!-- 中間：左右眼鏡片橫切面即時動態畫布 -->
     <main class="display-container">
         <!-- 右眼顯示卡 -->
         <div class="eye-card">
@@ -508,13 +561,11 @@
         </div>
     </main>
 
-    <!-- 下方：獨立參數調整面板 -->
     <footer class="controls-container">
         <!-- 右眼控制面板 -->
         <div class="control-panel">
             <div class="panel-title">右眼 OD 參數設定</div>
             
-            <!-- SPH -->
             <div class="control-row">
                 <div class="control-label-row">
                     <label>球面度數 (SPH)</label>
@@ -523,7 +574,6 @@
                 <input type="range" id="sph-od" min="-15.00" max="8.00" step="0.25" value="-4.00" oninput="syncAll()">
             </div>
 
-            <!-- CYL -->
             <div class="control-row">
                 <div class="control-label-row">
                     <label>散光度數 (CYL)</label>
@@ -532,7 +582,14 @@
                 <input type="range" id="cyl-od" min="-6.00" max="0.00" step="0.25" value="0.00" oninput="syncAll()">
             </div>
             
-            <!-- 面型設計 -->
+            <div class="control-row">
+                <div class="control-label-row">
+                    <label>散光軸度 (AXIS)</label>
+                    <div class="value-display" id="val-axis-od">180°</div>
+                </div>
+                <input type="range" id="axis-od" min="0" max="180" step="1" value="180" oninput="syncAll()">
+            </div>
+            
             <div class="control-row">
                 <div class="control-label-row"><label>光學面型設計</label></div>
                 <div class="segmented-control design-control" id="design-type-od">
@@ -542,7 +599,6 @@
                 </div>
             </div>
 
-            <!-- 折射率選擇 -->
             <div class="control-row">
                 <div class="control-label-row"><label>鏡片材質折射率 (n)</label></div>
                 <div class="index-grid" id="index-grid-od">
@@ -557,7 +613,6 @@
                 </div>
             </div>
 
-            <!-- CT 微調 -->
             <div class="control-row">
                 <div class="control-label-row">
                     <label>中心厚度 (CT)</label>
@@ -570,7 +625,6 @@
                 </div>
             </div>
 
-            <!-- 車邊樣態 -->
             <div class="control-row">
                 <div class="control-label-row"><label>邊緣加工工藝</label></div>
                 <div class="segmented-control" id="edge-type-od">
@@ -580,7 +634,6 @@
                 </div>
             </div>
 
-            <!-- 位置占比 -->
             <div class="control-row" id="ratio-row-od">
                 <div class="control-label-row">
                     <label>溝槽/山角位置 (前表面起)</label>
@@ -594,7 +647,6 @@
         <div class="control-panel">
             <div class="panel-title">左眼 OS 參數設定</div>
             
-            <!-- SPH -->
             <div class="control-row">
                 <div class="control-label-row">
                     <label>球面度數 (SPH)</label>
@@ -603,7 +655,6 @@
                 <input type="range" id="sph-os" min="-15.00" max="8.00" step="0.25" value="-4.00" oninput="syncAll()">
             </div>
 
-            <!-- CYL -->
             <div class="control-row">
                 <div class="control-label-row">
                     <label>散光度數 (CYL)</label>
@@ -612,7 +663,14 @@
                 <input type="range" id="cyl-os" min="-6.00" max="0.00" step="0.25" value="0.00" oninput="syncAll()">
             </div>
             
-            <!-- 面型設計 -->
+            <div class="control-row">
+                <div class="control-label-row">
+                    <label>散光軸度 (AXIS)</label>
+                    <div class="value-display" id="val-axis-os">180°</div>
+                </div>
+                <input type="range" id="axis-os" min="0" max="180" step="1" value="180" oninput="syncAll()">
+            </div>
+            
             <div class="control-row">
                 <div class="control-label-row"><label>光學面型設計</label></div>
                 <div class="segmented-control design-control" id="design-type-os">
@@ -622,7 +680,6 @@
                 </div>
             </div>
 
-            <!-- 折射率選擇 -->
             <div class="control-row">
                 <div class="control-label-row"><label>鏡片材質折射率 (n)</label></div>
                 <div class="index-grid" id="index-grid-os">
@@ -637,7 +694,6 @@
                 </div>
             </div>
 
-            <!-- CT 微調 -->
             <div class="control-row">
                 <div class="control-label-row">
                     <label>中心厚度 (CT)</label>
@@ -650,7 +706,6 @@
                 </div>
             </div>
 
-            <!-- 車邊樣態 -->
             <div class="control-row">
                 <div class="control-label-row"><label>邊緣加工工藝</label></div>
                 <div class="segmented-control" id="edge-type-os">
@@ -660,7 +715,6 @@
                 </div>
             </div>
 
-            <!-- 位置占比 -->
             <div class="control-row" id="ratio-row-os">
                 <div class="control-label-row">
                     <label>溝槽/山角位置 (前表面起)</label>
@@ -672,25 +726,22 @@
     </footer>
 
     <script>
-        // 存放全局狀態
         const state = {
             frameA: 52,
+            frameB: 40,
+            frameED: 54, // 預設新增 ED 欄位
             frameDBL: 18,
             pdTotal: 64.0,
-            od: { sph: -4.00, cyl: 0.00, index: 1.50, ct: 1.5, edgeType: 'V', ratio: 0.33, design: 'SPH' },
-            os: { sph: -4.00, cyl: 0.00, index: 1.50, ct: 1.5, edgeType: 'V', ratio: 0.33, design: 'SPH' },
+            od: { sph: -4.00, cyl: 0.00, axis: 180, index: 1.50, ct: 1.5, edgeType: 'V', ratio: 0.33, design: 'SPH' },
+            os: { sph: -4.00, cyl: 0.00, axis: 180, index: 1.50, ct: 1.5, edgeType: 'V', ratio: 0.33, design: 'SPH' },
             pdOD: 32.0,
             pdOS: 32.0
         };
         
-        // 為了將使用者校正倍率（3.9 修正為 5.0 的邏輯）映射到真實螢幕像素
-        // 我們在此做一個基準縮放率轉換。
         const BASE_SCALE_MULTIPLIER = 5.0 / 3.9;
 
-        // 初始化
         window.addEventListener('load', () => {
             setupCanvasResizing();
-            // 在確保 DOM 準備好後繪製一次
             setTimeout(syncAll, 50);
         });
         
@@ -704,18 +755,16 @@
             canvases.forEach(id => {
                 const canvas = document.getElementById(id);
                 const rect = canvas.parentElement.getBoundingClientRect();
-                // 確保寬高有效
                 if (rect.width > 0 && rect.height > 0) {
                     canvas.width = rect.width * window.devicePixelRatio;
                     canvas.height = rect.height * window.devicePixelRatio;
                     const ctx = canvas.getContext('2d');
-                    ctx.setTransform(1, 0, 0, 1, 0, 0); // 重設變形矩陣
+                    ctx.setTransform(1, 0, 0, 1, 0, 0); 
                     ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
                 }
             });
         }
         
-        // PD 總量輸入更新單眼
         function updatePDTotal() {
             let total = parseFloat(document.getElementById('pdTotal').value) || 64;
             let half = total / 2;
@@ -724,7 +773,6 @@
             validateAndSync();
         }
         
-        // 單眼 PD 異動更新總量
         function updatePDSingle() {
             let od = parseFloat(document.getElementById('pdOD').value) || 32;
             let os = parseFloat(document.getElementById('pdOS').value) || 32;
@@ -732,12 +780,23 @@
             validateAndSync();
         }
 
-        function validateAndSync() {
-            state.frameA = parseFloat(document.getElementById('frameA').value) || 50;
+        // isEDManual 標記是否為手動修改 ED，如果改 A 則自動連動 ED 參考值
+        function validateAndSync(isEDManual = false) {
+            let newA = parseFloat(document.getElementById('frameA').value) || 50;
+            
+            // 如果更改了 A 且不是手動改 ED，則自動帶入預設的 ED (A + 2) 作為防呆參考
+            if (newA !== state.frameA && !isEDManual) {
+                document.getElementById('frameED').value = newA + 2;
+            }
+
+            state.frameA = newA;
+            state.frameB = parseFloat(document.getElementById('frameB').value) || 40;
+            state.frameED = parseFloat(document.getElementById('frameED').value) || (state.frameA + 2);
             state.frameDBL = parseFloat(document.getElementById('frameDBL').value) || 16;
             state.pdTotal = parseFloat(document.getElementById('pdTotal').value) || 64;
             state.pdOD = parseFloat(document.getElementById('pdOD').value) || 32;
             state.pdOS = parseFloat(document.getElementById('pdOS').value) || 32;
+            
             syncAll();
         }
 
@@ -751,14 +810,13 @@
                 else buttons[i].classList.remove('active');
             }
             
-            // 更精細的 CT 預設建議 (基於折射率)
             let power = state[eye].sph + state[eye].cyl;
             if (power < 0) {
                 if(value >= 1.80) state[eye].ct = 0.9;
                 else if (value >= 1.67) state[eye].ct = 1.1;
                 else state[eye].ct = 1.3;
             } else {
-                state[eye].ct = 2.5; // 遠視中心預設較厚
+                state[eye].ct = 2.5; 
             }
             document.getElementById(`ct-${eye}`).value = state[eye].ct;
             syncAll();
@@ -808,7 +866,6 @@
             const rctx = rCanvas.getContext('2d');
             rctx.clearRect(0, 0, rCanvas.width, rCanvas.height);
             
-            // 轉換為真實畫布比例
             const mmToPx = mmToPxBase * BASE_SCALE_MULTIPLIER;
             
             rctx.fillStyle = '#2c3531';
@@ -816,13 +873,11 @@
             rctx.lineWidth = 1.5;
             rctx.strokeStyle = '#2c3531';
             
-            // 畫一條橫跨基底線
             rctx.beginPath();
             rctx.moveTo(10, 25);
-            rctx.lineTo(10 + 100 * mmToPx, 25); // 盡量畫長一點
+            rctx.lineTo(10 + 100 * mmToPx, 25); 
             rctx.stroke();
 
-            // 畫刻度
             rctx.lineWidth = 1;
             for(let mm=0; mm<=100; mm++) {
                 let x = 10 + mm * mmToPx;
@@ -841,37 +896,59 @@
                 rctx.stroke();
             }
         }
+        
+        // ★修正後的精確原片直徑算式 (MBS) ★
+        function calculateBlankSize(eyeType) {
+            const pd = eyeType === 'OD' ? state.pdOD : state.pdOS;
+            
+            // 內偏心量 = 鏡框幾何中心 - 單眼PD
+            const dec = Math.max(0, ((state.frameA + state.frameDBL) / 2) - pd);
+            
+            // MBS = 有效直徑(ED) + 2 * 偏心量 + 加工安全餘量(2mm)
+            const minBlank = state.frameED + (2 * dec) + 2;
+            
+            // 常規標準原片直徑
+            const standardBlanks = [55, 60, 65, 70, 75, 80];
+            let recommend = 80;
+            for(let b of standardBlanks) {
+                if(b >= minBlank) {
+                    recommend = b;
+                    break;
+                }
+            }
+            
+            // 提示防呆：如果計算出結果大於80，明確告知需特製
+            return recommend >= minBlank ? `Ø ${recommend} mm` : `> Ø 80 (特製)`;
+        }
 
         function syncAll() {
-            // 從 UI 讀取參數
             ['od', 'os'].forEach(eye => {
                 state[eye].sph = parseFloat(document.getElementById(`sph-${eye}`).value);
                 state[eye].cyl = parseFloat(document.getElementById(`cyl-${eye}`).value);
+                state[eye].axis = parseInt(document.getElementById(`axis-${eye}`).value);
                 state[eye].ct = parseFloat(document.getElementById(`ct-${eye}`).value);
                 state[eye].ratio = parseInt(document.getElementById(`ratio-${eye}`).value) / 100;
 
-                // 更新數值文字顯示
                 document.getElementById(`val-sph-${eye}`).innerText = formatDegree(state[eye].sph);
                 document.getElementById(`val-cyl-${eye}`).innerText = formatDegree(state[eye].cyl);
+                document.getElementById(`val-axis-${eye}`).innerText = `${state[eye].axis}°`;
                 document.getElementById(`val-ct-${eye}`).innerText = `${state[eye].ct.toFixed(1)} mm`;
                 document.getElementById(`val-ratio-${eye}`).innerText = `${Math.round(state[eye].ratio*100)}%`;
                 document.getElementById(`metric-ct-${eye}`).innerText = state[eye].ct.toFixed(1);
             });
 
-            // 1. 動態帶入鏡框與瞳距指定參數 (XX □ XX)
             document.getElementById('frame-display-title').innerText = `(${state.frameA} □ ${state.frameDBL})`;
+            
+            // 更新最佳原片建議
+            document.getElementById('blank-od').innerText = calculateBlankSize('OD');
+            document.getElementById('blank-os').innerText = calculateBlankSize('OS');
 
-            // 2. 更新並繪製比例尺
             let userScale = parseFloat(document.getElementById('calibScale').value);
             document.getElementById('calib-val').innerText = userScale.toFixed(2) + 'x';
             
-            // 由於使用者反映之前 3.9 要等同 5.0 的大小，
-            // 實際渲染使用的 Pixel/mm 倍率，透過 BASE_SCALE_MULTIPLIER 修正
             let actualRenderScale = userScale * BASE_SCALE_MULTIPLIER;
-            
-            drawRuler(userScale); // Ruler傳入原始值，內部會套用Multiplier
+            drawRuler(userScale); 
 
-            // 執行鏡片渲染，傳入修正後的比例
             renderEye('canvasOD', 'OD', actualRenderScale);
             renderEye('canvasOS', 'OS', actualRenderScale);
         }
@@ -880,7 +957,6 @@
             const canvas = document.getElementById(canvasId);
             const ctx = canvas.getContext('2d');
             
-            // 畫布在 DOM 尚未準備好時可能無寬高
             if (!canvas.width || !canvas.height) return;
             
             const w = canvas.width / window.devicePixelRatio;
@@ -891,51 +967,42 @@
             const eyeState = type === 'OD' ? state.od : state.os;
             const pd = type === 'OD' ? state.pdOD : state.pdOS;
             
-            // 為了簡化展示（且通常平切圖不太需要嚴格考量散光軸，因隨裁型會變動截面）
-            // 這裡採用水平方向有效度數近似
-            const power = eyeState.sph + (eyeState.cyl / 2); // 簡化為等效球面度來展示中央切面
+            // 散光軸度(Axis)納入水平橫切面的度數運算
+            const rad = eyeState.axis * Math.PI / 180;
+            const power = eyeState.sph + eyeState.cyl * Math.pow(Math.sin(rad), 2);
 
-            // 內偏心量 = 鏡框幾何中心距離的一半 - 單眼PD
             const dec = ((state.frameA + state.frameDBL) / 2) - pd;
             
-            // 計算相對於光學中心 (x=0) 的左右邊界 (單位 mm)
             let xNasal, xTemporal;
             if (type === 'OD') {
                 xNasal = (state.frameA / 2) - dec;
                 xTemporal = -((state.frameA / 2) + dec);
             } else {
-                xNasal = -((state.frameA / 2) - dec); // 左眼鼻側在 -x 方向
+                xNasal = -((state.frameA / 2) - dec); 
                 xTemporal = (state.frameA / 2) + dec;
             }
 
-            // 根據度數與面型設計，推估 Base Curve
             let bc = 4.0;
             if (power >= 0) bc = 5.0 + power * 0.4;
             else bc = Math.max(0.5, 4.0 + power * 0.35);
             
-            // [新增] 根據面型設計 (SPH / ASP / DAS) 微調曲率，產生平坦化效應
             let flatnessFactorFront = 1.0; 
             let flatnessFactorBack = 1.0;
             
             if (eyeState.design === 'ASP') {
-                // 單面非球面，通常前表面較平，特別是正度數
                 flatnessFactorFront = 0.75; 
                 if(power < 0) flatnessFactorBack = 0.9;
             } else if (eyeState.design === 'DAS') {
-                // 雙面非球面，前後都平，厚度更薄
                 flatnessFactorFront = 0.6;
                 flatnessFactorBack = 0.75;
             }
 
-            // 曲率半徑計算 (修正平坦化)
             const r1 = (((eyeState.index - 1) / bc) * 1000) / flatnessFactorFront; 
             const r2 = (((eyeState.index - 1) / (bc - power)) * 1000) / flatnessFactorBack; 
 
-            // 矢高 (Sagitta) 計算函數
             function getSag1(x) { 
-                // 防止負平方根
                 let val = r1*r1 - x*x;
-                if(val < 0) return r1; // 超出物理極限，回傳平坦值
+                if(val < 0) return r1; 
                 return r1 - Math.sqrt(val); 
             }
             function getSag2(x) { 
@@ -944,7 +1011,6 @@
                 return r2 - Math.sqrt(val); 
             }
 
-            // 設定繪圖中心點 (稍微偏下留給上方資訊)
             const cx = w / 2;
             const cy = h / 2 - 10;
 
@@ -953,9 +1019,8 @@
             
             let pointsFront = [];
             let pointsBack = [];
-            const steps = 80; // 提高精細度
+            const steps = 80; 
             
-            // 產生鏡片上下表面取樣點
             for(let i=0; i<=steps; i++) {
                 let x = startX + (endX - startX) * (i / steps);
                 let sag1 = getSag1(x);
@@ -968,19 +1033,16 @@
                 pointsBack.push({x: cx + x * mmToPx, y: yb});
             }
 
-            // 計算端點厚度
             const tNasal = Math.abs((eyeState.ct + getSag2(xNasal) - getSag1(xNasal)));
             const tTemporal = Math.abs((eyeState.ct + getSag2(xTemporal) - getSag1(xTemporal)));
 
             document.getElementById(`metric-nasal-${type.toLowerCase()}`).innerText = tNasal.toFixed(2);
             document.getElementById(`metric-temp-${type.toLowerCase()}`).innerText = tTemporal.toFixed(2);
 
-            // 1. 繪製科技感背景格線
             ctx.strokeStyle = '#1d2722';
             ctx.lineWidth = 0.5;
             for(let g = -50; g <= 50; g += 5) {
                 let pxOffset = cx + g * mmToPx;
-                // 只繪製可見區域的線
                 if(pxOffset > 0 && pxOffset < w) {
                     ctx.beginPath();
                     ctx.moveTo(pxOffset, 0);
@@ -989,10 +1051,8 @@
                 }
             }
             
-            // 2. 組合並繪製鏡片本體
             ctx.beginPath();
             
-            // 上邊緣 (前表面，由左至右)
             ctx.moveTo(pointsFront[0].x, pointsFront[0].y);
             for(let i=1; i<pointsFront.length; i++) {
                 ctx.lineTo(pointsFront[i].x, pointsFront[i].y);
@@ -1001,10 +1061,8 @@
             let rightEdgeFront = pointsFront[pointsFront.length-1];
             let rightEdgeBack = pointsBack[pointsBack.length-1];
             
-            // 右側加工邊緣 (由上往下)
             drawEdgeProfilePath(ctx, rightEdgeFront, rightEdgeBack, 1, eyeState.edgeType, eyeState.ratio, mmToPx, false);
 
-            // 下邊緣 (後表面，由右至左)
             for(let i=pointsBack.length-1; i>=0; i--) {
                 ctx.lineTo(pointsBack[i].x, pointsBack[i].y);
             }
@@ -1012,25 +1070,20 @@
             let leftEdgeFront = pointsFront[0];
             let leftEdgeBack = pointsBack[0];
             
-            // 左側加工邊緣 (由下往上，isReverse=true 防止漏白)
             drawEdgeProfilePath(ctx, leftEdgeFront, leftEdgeBack, -1, eyeState.edgeType, eyeState.ratio, mmToPx, true);
 
             ctx.closePath();
             
-            // 漸層填充設定
             let glassGrad = ctx.createLinearGradient(0, cy - 40, 0, cy + 40);
             if(eyeState.index >= 1.80) {
-                // 玻璃高折射
                 glassGrad.addColorStop(0, 'rgba(150, 210, 230, 0.45)');
                 glassGrad.addColorStop(0.5, 'rgba(100, 180, 210, 0.25)');
                 glassGrad.addColorStop(1, 'rgba(150, 210, 230, 0.5)');
             } else if (eyeState.design !== 'SPH') {
-                // 非球面 / 雙面非球面 特別鍍膜感 (稍微偏紫藍)
                 glassGrad.addColorStop(0, 'rgba(170, 190, 210, 0.45)');
                 glassGrad.addColorStop(0.5, 'rgba(130, 160, 180, 0.2)');
                 glassGrad.addColorStop(1, 'rgba(170, 190, 210, 0.5)');
             } else {
-                // 一般球面樹脂 (標準莫蘭迪綠)
                 glassGrad.addColorStop(0, 'rgba(160, 200, 180, 0.45)');
                 glassGrad.addColorStop(0.5, 'rgba(120, 170, 140, 0.2)');
                 glassGrad.addColorStop(1, 'rgba(160, 200, 180, 0.5)');
@@ -1039,33 +1092,23 @@
             ctx.fillStyle = glassGrad;
             ctx.fill();
 
-            // 綠色外框基底線
             ctx.lineWidth = 1.0;
             ctx.strokeStyle = '#8abda5';
             ctx.stroke();
 
-            // ==========================
-            // 獨立繪製紅色邊緣加工標示線
-            // ==========================
             ctx.lineWidth = 2.0;
             ctx.strokeStyle = '#ff3b30'; 
 
-            // 描繪左側紅線 (由上往下畫，不須反轉)
             ctx.beginPath();
             ctx.moveTo(leftEdgeFront.x, leftEdgeFront.y);
             drawEdgeProfilePath(ctx, leftEdgeFront, leftEdgeBack, -1, eyeState.edgeType, eyeState.ratio, mmToPx, false);
             ctx.stroke();
 
-            // 描繪右側紅線 (由上往下畫)
             ctx.beginPath();
             ctx.moveTo(rightEdgeFront.x, rightEdgeFront.y);
             drawEdgeProfilePath(ctx, rightEdgeFront, rightEdgeBack, 1, eyeState.edgeType, eyeState.ratio, mmToPx, false);
             ctx.stroke();
 
-            // ==========================
-            // 標註與輔助線
-            // ==========================
-            // 光學軸心
             ctx.strokeStyle = 'rgba(255,255,255,0.3)';
             ctx.lineWidth = 1;
             ctx.setLineDash([4, 4]);
@@ -1075,26 +1118,22 @@
             ctx.stroke();
             ctx.setLineDash([]);
 
-            // 瞳孔中心亮點
             ctx.fillStyle = '#eb5e55';
             ctx.beginPath();
             ctx.arc(cx, cy, 3, 0, 2*Math.PI);
             ctx.fill();
 
-            // 中心軸心文字
             ctx.fillStyle = '#ffffff';
             ctx.font = '11px sans-serif';
             ctx.textAlign = 'center';
             ctx.fillText("光學中心", cx, cy - 18);
 
-            // 兩側厚度數據與位置
             ctx.font = 'bold 12px sans-serif';
             ctx.fillStyle = '#a0b0a6';
             
             let tLeftStr = `${(type === 'OD' ? tTemporal : tNasal).toFixed(1)}mm`;
             let tRightStr = `${(type === 'OD' ? tNasal : tTemporal).toFixed(1)}mm`;
             
-            // 避免文字超出邊界，稍微限制 X 座標
             let textLeftX = Math.max(leftEdgeFront.x - 45, 10);
             let textRightX = Math.min(rightEdgeFront.x + 45, w - 10);
 
@@ -1103,7 +1142,6 @@
             ctx.textAlign = 'left';
             ctx.fillText(type === 'OD' ? `鼻側: ${tRightStr}` : `顳側: ${tRightStr}`, textRightX, cy + 5);
             
-            // 標示設計面型浮水印
             ctx.font = 'bold 16px sans-serif';
             ctx.fillStyle = 'rgba(255,255,255,0.1)';
             ctx.textAlign = 'center';
@@ -1115,7 +1153,6 @@
         function drawEdgeProfilePath(ctx, frontPt, backPt, direction, type, ratio, mmToPx, isReverse) {
             const edgeThicknessPx = backPt.y - frontPt.y;
             const midY = frontPt.y + edgeThicknessPx * ratio;
-            // 山角/車溝深度設為 0.8mm，比例較真實
             const edgeWidthPx = 0.8 * mmToPx; 
 
             if (type === 'V') {
