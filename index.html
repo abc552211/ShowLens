@@ -243,48 +243,10 @@
         
         .eye-body-layout {
             display: flex;
-            gap: 10px;
+            gap: 0;
             align-items: stretch;
-            height: 340px; /* 雙視角預設加高 */
-        }
-
-        .ep-slider-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: #f4f7f5;
-            border-radius: 8px;
-            padding: 10px 5px;
-            width: 45px;
-            border: 1px solid #e2eae5;
-        }
-        
-        .ep-label {
-            font-size: 12px;
-            font-weight: 800;
-            color: #4a5a51;
-            margin-bottom: 5px;
-        }
-        
-        .ep-val {
-            font-size: 12px;
-            font-weight: bold;
-            color: #e67e22;
-            margin-top: 5px;
-            background: #fff;
-            padding: 2px 4px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-        }
-
-        input[type=range].vertical-slider {
-            -webkit-appearance: slider-vertical;
-            appearance: slider-vertical;
+            height: 340px; 
             width: 100%;
-            height: 100%;
-            margin: 0;
-            cursor: pointer;
         }
 
         .canvas-wrapper {
@@ -297,6 +259,7 @@
             align-items: center;
             overflow: hidden;
             box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+            width: 100%;
         }
 
         canvas {
@@ -332,8 +295,68 @@
             padding-left: 8px;
         }
 
+        /* --- 新增：將度數區與EP拉桿左右並排的佈局 --- */
+        .top-params-flex {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 12px;
+            align-items: stretch;
+        }
+        
+        .params-left {
+            flex: 1;
+        }
+        
+        .ep-slider-container {
+            width: 55px;
+            background: #f4f7f5;
+            border-radius: 8px;
+            border: 1px solid #e2eae5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 5px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        
+        .ep-label {
+            font-size: 12px;
+            font-weight: 800;
+            color: #4a5a51;
+            margin-bottom: 8px;
+        }
+        
+        .ep-val {
+            font-size: 12px;
+            font-weight: bold;
+            color: #e67e22;
+            margin-top: 8px;
+            background: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        input[type=range].vertical-slider {
+            -webkit-appearance: slider-vertical;
+            appearance: slider-vertical;
+            width: 100%;
+            height: 100px; /* 給予足夠高度 */
+            margin: 0;
+            cursor: pointer;
+            flex: 1;
+        }
+
         .control-row {
             margin-bottom: 16px;
+        }
+        
+        /* 在 Flex 裡的 row 調整 bottom margin */
+        .params-left .control-row {
+            margin-bottom: 12px;
+        }
+        .params-left .control-row:last-child {
+            margin-bottom: 0;
         }
 
         .control-label-row {
@@ -499,9 +522,9 @@
                     <input type="number" id="frameB" value="40" min="20" max="65" oninput="validateAndSync()">
                 </div>
                 
-                <div class="inline-input-group">
+                <div class="inline-input-group" title="ED (有效直徑)為鏡框最大對角線，影響原片大小計算">
                     <label style="color:#e67e22;">ED</label>
-                    <input type="number" id="frameED" value="40" min="30" max="80" oninput="validateAndSync()">
+                    <input type="number" id="frameED" value="40" min="30" max="80" oninput="validateAndSync(true)">
                 </div>
                 
                 <div class="pd-separator"></div>
@@ -547,7 +570,7 @@
     </section>
 
     <main class="display-container">
-        <!-- 右眼顯示卡 OD (EP在最左側) -->
+        <!-- 右眼顯示卡 OD -->
         <div class="eye-card">
             <div class="eye-card-header">
                 <div class="eye-badge od-badge">右眼 OD 面向客戶視角</div>
@@ -559,20 +582,15 @@
                     <div class="metric-item vertical-metric">下緣:<span id="metric-bot-od">--</span></div>
                 </div>
             </div>
+            <!-- 將鏡片展示區拓寬，移除原有的EP拉桿 -->
             <div class="eye-body-layout">
-                <!-- OD EP 垂直拉桿在左側 -->
-                <div class="ep-slider-container">
-                    <div class="ep-label">EP高</div>
-                    <input type="range" id="ep-od" class="vertical-slider" min="10" max="45" step="0.5" value="24" oninput="syncAll()">
-                    <div class="ep-val" id="val-ep-od">24.0</div>
-                </div>
                 <div class="canvas-wrapper">
                     <canvas id="canvasOD"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- 左眼顯示卡 OS (EP在最右側) -->
+        <!-- 左眼顯示卡 OS -->
         <div class="eye-card">
             <div class="eye-card-header">
                 <div class="eye-badge os-badge">左眼 OS 面向客戶視角</div>
@@ -584,15 +602,10 @@
                     <div class="metric-item vertical-metric">下緣:<span id="metric-bot-os">--</span></div>
                 </div>
             </div>
+            <!-- 將鏡片展示區拓寬，移除原有的EP拉桿 -->
             <div class="eye-body-layout">
                 <div class="canvas-wrapper">
                     <canvas id="canvasOS"></canvas>
-                </div>
-                <!-- OS EP 垂直拉桿在右側 -->
-                <div class="ep-slider-container">
-                    <div class="ep-label">EP高</div>
-                    <input type="range" id="ep-os" class="vertical-slider" min="10" max="45" step="0.5" value="24" oninput="syncAll()">
-                    <div class="ep-val" id="val-ep-os">24.0</div>
                 </div>
             </div>
         </div>
@@ -603,28 +616,40 @@
         <div class="control-panel">
             <div class="panel-title">右眼 OD 參數設定</div>
             
-            <div class="control-row">
-                <div class="control-label-row">
-                    <label>球面度數 (SPH)</label>
-                    <div class="value-display" id="val-sph-od">-4.00</div>
-                </div>
-                <input type="range" class="horizontal-slider" id="sph-od" min="-15.00" max="8.00" step="0.25" value="-4.00" oninput="syncAll()">
-            </div>
+            <!-- 將度數參數與EP拉桿並排 -->
+            <div class="top-params-flex">
+                <div class="params-left">
+                    <div class="control-row">
+                        <div class="control-label-row">
+                            <label>球面度數 (SPH)</label>
+                            <div class="value-display" id="val-sph-od">-4.00</div>
+                        </div>
+                        <input type="range" class="horizontal-slider" id="sph-od" min="-15.00" max="8.00" step="0.25" value="-4.00" oninput="syncAll()">
+                    </div>
 
-            <div class="control-row">
-                <div class="control-label-row">
-                    <label>散光度數 (CYL)</label>
-                    <div class="value-display" id="val-cyl-od">0.00</div>
+                    <div class="control-row">
+                        <div class="control-label-row">
+                            <label>散光度數 (CYL)</label>
+                            <div class="value-display" id="val-cyl-od">0.00</div>
+                        </div>
+                        <input type="range" class="horizontal-slider" id="cyl-od" min="-6.00" max="0.00" step="0.25" value="0.00" oninput="syncAll()">
+                    </div>
+                    
+                    <div class="control-row">
+                        <div class="control-label-row">
+                            <label>散光軸度 (AXIS)</label>
+                            <div class="value-display" id="val-axis-od">180°</div>
+                        </div>
+                        <input type="range" class="horizontal-slider" id="axis-od" min="0" max="180" step="1" value="180" oninput="syncAll()">
+                    </div>
                 </div>
-                <input type="range" class="horizontal-slider" id="cyl-od" min="-6.00" max="0.00" step="0.25" value="0.00" oninput="syncAll()">
-            </div>
-            
-            <div class="control-row">
-                <div class="control-label-row">
-                    <label>散光軸度 (AXIS)</label>
-                    <div class="value-display" id="val-axis-od">180°</div>
+                
+                <!-- 新的EP拉桿位置 -->
+                <div class="ep-slider-container">
+                    <div class="ep-label">EP高</div>
+                    <input type="range" id="ep-od" class="vertical-slider" min="10" max="45" step="0.5" value="24" oninput="syncAll()">
+                    <div class="ep-val" id="val-ep-od">24.0</div>
                 </div>
-                <input type="range" class="horizontal-slider" id="axis-od" min="0" max="180" step="1" value="180" oninput="syncAll()">
             </div>
             
             <div class="control-row">
@@ -684,28 +709,39 @@
         <div class="control-panel">
             <div class="panel-title">左眼 OS 參數設定</div>
             
-            <div class="control-row">
-                <div class="control-label-row">
-                    <label>球面度數 (SPH)</label>
-                    <div class="value-display" id="val-sph-os">-4.00</div>
-                </div>
-                <input type="range" class="horizontal-slider" id="sph-os" min="-15.00" max="8.00" step="0.25" value="-4.00" oninput="syncAll()">
-            </div>
+            <div class="top-params-flex">
+                <div class="params-left">
+                    <div class="control-row">
+                        <div class="control-label-row">
+                            <label>球面度數 (SPH)</label>
+                            <div class="value-display" id="val-sph-os">-4.00</div>
+                        </div>
+                        <input type="range" class="horizontal-slider" id="sph-os" min="-15.00" max="8.00" step="0.25" value="-4.00" oninput="syncAll()">
+                    </div>
 
-            <div class="control-row">
-                <div class="control-label-row">
-                    <label>散光度數 (CYL)</label>
-                    <div class="value-display" id="val-cyl-os">0.00</div>
+                    <div class="control-row">
+                        <div class="control-label-row">
+                            <label>散光度數 (CYL)</label>
+                            <div class="value-display" id="val-cyl-os">0.00</div>
+                        </div>
+                        <input type="range" class="horizontal-slider" id="cyl-os" min="-6.00" max="0.00" step="0.25" value="0.00" oninput="syncAll()">
+                    </div>
+                    
+                    <div class="control-row">
+                        <div class="control-label-row">
+                            <label>散光軸度 (AXIS)</label>
+                            <div class="value-display" id="val-axis-os">180°</div>
+                        </div>
+                        <input type="range" class="horizontal-slider" id="axis-os" min="0" max="180" step="1" value="180" oninput="syncAll()">
+                    </div>
                 </div>
-                <input type="range" class="horizontal-slider" id="cyl-os" min="-6.00" max="0.00" step="0.25" value="0.00" oninput="syncAll()">
-            </div>
-            
-            <div class="control-row">
-                <div class="control-label-row">
-                    <label>散光軸度 (AXIS)</label>
-                    <div class="value-display" id="val-axis-os">180°</div>
+                
+                <!-- 新的EP拉桿位置 -->
+                <div class="ep-slider-container">
+                    <div class="ep-label">EP高</div>
+                    <input type="range" id="ep-os" class="vertical-slider" min="10" max="45" step="0.5" value="24" oninput="syncAll()">
+                    <div class="ep-val" id="val-ep-os">24.0</div>
                 </div>
-                <input type="range" class="horizontal-slider" id="axis-os" min="0" max="180" step="1" value="180" oninput="syncAll()">
             </div>
             
             <div class="control-row">
@@ -767,7 +803,7 @@
             viewMode: 'dual', // 'single' 僅水平, 'dual' 水平+垂直
             frameA: 52,
             frameB: 40,
-            frameED: 40, // 依要求預設 40
+            frameED: 40, // 依要求預設為 40，不會與A強制連動
             frameDBL: 18,
             pdTotal: 64.0,
             od: { sph: -4.00, cyl: 0.00, axis: 180, index: 1.50, ct: 1.2, ep: 24, edgeType: 'V', ratio: 0.33, design: 'SPH' },
@@ -793,28 +829,22 @@
         function setViewMode(mode) {
             state.viewMode = mode;
             
-            // 更新按鈕狀態
             document.getElementById('btn-mode-single').classList.toggle('active', mode === 'single');
             document.getElementById('btn-mode-dual').classList.toggle('active', mode === 'dual');
             document.getElementById('btn-mode-single').style.background = mode === 'single' ? '#5e7e6b' : 'transparent';
             document.getElementById('btn-mode-dual').style.background = mode === 'dual' ? '#5e7e6b' : 'transparent';
             
-            // 更新畫布高度與 EP 滑桿顯示
             const layouts = document.querySelectorAll('.eye-body-layout');
-            const epSliders = document.querySelectorAll('.ep-slider-container');
             const vMetrics = document.querySelectorAll('.vertical-metric');
             
             if (mode === 'single') {
                 layouts.forEach(el => el.style.height = '200px'); // 高度降低
-                epSliders.forEach(el => el.style.display = 'none'); // 隱藏EP拉桿
                 vMetrics.forEach(el => el.style.display = 'none'); // 隱藏上/下緣數據
             } else {
                 layouts.forEach(el => el.style.height = '340px'); // 恢復高畫布
-                epSliders.forEach(el => el.style.display = 'flex'); // 顯示EP拉桿
                 vMetrics.forEach(el => el.style.display = 'block'); // 顯示上/下緣數據
             }
             
-            // 重新校正畫布並繪製
             setupCanvasResizing();
             syncAll();
         }
@@ -857,6 +887,7 @@
             validateAndSync();
         }
 
+        // 移除了 A寬 與 ED 的連動防呆
         function validateAndSync() {
             state.frameA = parseFloat(document.getElementById('frameA').value) || 50;
             let oldB = state.frameB;
@@ -868,7 +899,8 @@
                 document.getElementById('ep-os').value = defaultEP;
             }
 
-            state.frameED = parseFloat(document.getElementById('frameED').value) || 40; // 預設 40
+            // ED 獨立運作
+            state.frameED = parseFloat(document.getElementById('frameED').value) || 40;
             state.frameDBL = parseFloat(document.getElementById('frameDBL').value) || 16;
             state.pdTotal = parseFloat(document.getElementById('pdTotal').value) || 64;
             state.pdOD = parseFloat(document.getElementById('pdOD').value) || 32;
@@ -1093,11 +1125,11 @@
                 return r - Math.sqrt(val); 
             }
 
-            // 單視角時水平切面置中，雙視角時排版
-            const cxH = isDual ? w * 0.35 : w / 2;
+            // 單視角時水平切面置中，雙視角時水平置左、垂直置右
+            const cxH = isDual ? w * 0.42 : w / 2;
             const cyH = h / 2;
             
-            const cxV = w * 0.82;
+            const cxV = w * 0.88;
             const cyV = h / 2;
 
             // ==========================================
@@ -1128,10 +1160,9 @@
 
             ctx.strokeStyle = '#1d2722';
             ctx.lineWidth = 0.5;
+            let maxLineW = isDual ? w * 0.75 : w;
             for(let g = -50; g <= 50; g += 5) {
                 let pxOffset = cxH + g * mmToPx;
-                // 背景線繪製範圍
-                let maxLineW = isDual ? w * 0.65 : w;
                 if(pxOffset > 0 && pxOffset < maxLineW) {
                     ctx.beginPath(); ctx.moveTo(pxOffset, 0); ctx.lineTo(pxOffset, h); ctx.stroke();
                 }
@@ -1172,14 +1203,14 @@
             ctx.fillStyle = '#eb5e55'; ctx.beginPath(); ctx.arc(cxH, cyH, 3, 0, 2*Math.PI); ctx.fill();
             
             if (isDual) {
-                ctx.fillStyle = '#ffffff'; ctx.font = '10px sans-serif'; ctx.textAlign = 'center'; ctx.fillText("水平切面 (Top View)", cxH, cyH - 22);
+                ctx.fillStyle = '#ffffff'; ctx.font = '10px sans-serif'; ctx.textAlign = 'center'; ctx.fillText("水平切面 (Top)", cxH, cyH - 22);
             }
 
             let tLeftStr = `${(type === 'OD' ? tTemporal : tNasal).toFixed(1)}`;
             let tRightStr = `${(type === 'OD' ? tNasal : tTemporal).toFixed(1)}`;
             ctx.fillStyle = '#a0b0a6'; ctx.font = 'bold 11px sans-serif';
             ctx.textAlign = 'right'; ctx.fillText(type === 'OD' ? `顳側 ${tLeftStr}` : `鼻側 ${tLeftStr}`, Math.max(leftEdgeFrontH.x - 30, 10), cyH + 5);
-            ctx.textAlign = 'left'; ctx.fillText(type === 'OD' ? `鼻側 ${tRightStr}` : `顳側 ${tRightStr}`, Math.min(rightEdgeFrontH.x + 30, w), cyH + 5);
+            ctx.textAlign = 'left'; ctx.fillText(type === 'OD' ? `鼻側 ${tRightStr}` : `顳側 ${tRightStr}`, Math.min(rightEdgeFrontH.x + 30, maxLineW), cyH + 5);
 
             // ==========================================
             // 2. 繪製垂直橫切面 (Side View) - 僅雙視角模式顯示
