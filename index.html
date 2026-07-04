@@ -110,6 +110,7 @@
             color: #555;
         }
 
+        /* 確保輸入框在行動裝置/平板上顯示數字鍵盤 */
         .inline-input-group input {
             width: 58px;
             padding: 6px 6px;
@@ -121,6 +122,13 @@
             color: #2c3531;
             background-color: #f9faf9;
             transition: all 0.2s;
+            /* 移除預設的上下箭頭 (Spinner) */
+            -moz-appearance: textfield;
+        }
+        .inline-input-group input::-webkit-outer-spin-button,
+        .inline-input-group input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
 
         .inline-input-group input:focus {
@@ -146,6 +154,31 @@
             border-radius: 8px;
             border: 1px dashed #7a9a88;
             min-width: 320px;
+        }
+
+        .calibration-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .calib-btn {
+            width: 28px;
+            height: 28px;
+            border: 1px solid #ced6d2;
+            background: #ffffff;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #5e7e6b;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calib-btn:active {
+            background-color: #edf2ef;
         }
 
         /* 最佳原片建議區塊 */
@@ -295,7 +328,6 @@
             padding-left: 8px;
         }
 
-        /* --- 新增：將度數區與EP拉桿左右並排的佈局 --- */
         .top-params-flex {
             display: flex;
             gap: 15px;
@@ -341,7 +373,7 @@
             -webkit-appearance: slider-vertical;
             appearance: slider-vertical;
             width: 100%;
-            height: 100px; /* 給予足夠高度 */
+            height: 100px;
             margin: 0;
             cursor: pointer;
             flex: 1;
@@ -351,7 +383,6 @@
             margin-bottom: 16px;
         }
         
-        /* 在 Flex 裡的 row 調整 bottom margin */
         .params-left .control-row {
             margin-bottom: 12px;
         }
@@ -490,7 +521,6 @@
             <p>高階客製化智慧光學 雙視角 (水平/垂直) 動態演示系統</p>
         </div>
         <div class="system-status">
-            <!-- 視角切換開關 -->
             <div class="segmented-control" style="background:#4a6b5d; border: 1px solid #7a9a88;">
                 <button id="btn-mode-single" class="mode-toggle-btn" onclick="setViewMode('single')" style="color:#fff;">單視角(僅水平)</button>
                 <button id="btn-mode-dual" class="mode-toggle-btn active" onclick="setViewMode('dual')" style="color:#fff;">雙視角(水+垂)</button>
@@ -509,40 +539,41 @@
             </div>
             
             <div class="inputs-row">
+                <!-- 將 type="number" 改為 type="tel" 以確保在 iPad 上強制彈出數字鍵盤 -->
                 <div class="inline-input-group">
                     <label>A寬</label>
-                    <input type="number" id="frameA" value="52" min="30" max="70" oninput="validateAndSync()">
+                    <input type="tel" id="frameA" value="52" oninput="validateAndSync()">
                 </div>
                 <div class="inline-input-group">
                     <label>DBL</label>
-                    <input type="number" id="frameDBL" value="18" min="10" max="30" oninput="validateAndSync()">
+                    <input type="tel" id="frameDBL" value="18" oninput="validateAndSync()">
                 </div>
                 <div class="inline-input-group">
                     <label style="color:#2b6bb8;">B高</label>
-                    <input type="number" id="frameB" value="40" min="20" max="65" oninput="validateAndSync()">
+                    <input type="tel" id="frameB" value="40" oninput="validateAndSync()">
                 </div>
                 
                 <div class="inline-input-group" title="ED (有效直徑)為鏡框最大對角線，影響原片大小計算">
                     <label style="color:#e67e22;">ED</label>
-                    <input type="number" id="frameED" value="40" min="30" max="80" oninput="validateAndSync(true)">
+                    <input type="tel" id="frameED" value="40" oninput="validateAndSync(true)">
                 </div>
                 
                 <div class="pd-separator"></div>
                 
                 <div class="inline-input-group">
                     <label style="color:#d9534f;">總PD</label>
-                    <input type="number" id="pdTotal" value="64.0" min="50" max="80" step="0.5" oninput="updatePDTotal()">
+                    <input type="tel" id="pdTotal" value="64.0" oninput="updatePDTotal()">
                 </div>
                 
                 <div class="pd-separator"></div>
                 
                 <div class="inline-input-group">
                     <label style="color:#4a6b5d;">R.PD</label>
-                    <input type="number" id="pdOD" value="32.0" min="20" max="45" step="0.5" oninput="updatePDSingle()">
+                    <input type="tel" id="pdOD" value="32.0" oninput="updatePDSingle()">
                 </div>
                 <div class="inline-input-group">
                     <label style="color:#617a72;">L.PD</label>
-                    <input type="number" id="pdOS" value="32.0" min="20" max="45" step="0.5" oninput="updatePDSingle()">
+                    <input type="tel" id="pdOS" value="32.0" oninput="updatePDSingle()">
                 </div>
             </div>
             
@@ -561,9 +592,11 @@
         <div class="calibration-box">
             <div style="font-size:13px; font-weight:700; color:#4a6b5d; margin-bottom:4px;">📏 iPad 實體比例校正</div>
             <div style="font-size:12px; color:#555; margin-bottom:6px;">請將直尺貼齊螢幕，微調滑桿使下方 1cm 與直尺吻合：</div>
-            <div style="display:flex; align-items:center; gap:10px;">
+            <div class="calibration-controls">
+                <button class="calib-btn" onclick="stepCalib(-0.05)">-</button>
                 <input type="range" class="horizontal-slider" id="calibScale" min="3" max="8" step="0.05" value="5.0" oninput="syncAll()" style="flex:1;">
-                <span id="calib-val" style="font-weight:bold; font-size:14px; color:#2c3531; min-width:40px;">5.00x</span>
+                <button class="calib-btn" onclick="stepCalib(0.05)">+</button>
+                <span id="calib-val" style="font-weight:bold; font-size:14px; color:#2c3531; min-width:45px; text-align:right;">5.00x</span>
             </div>
             <canvas id="rulerCanvas" width="300" height="35" style="margin-top:8px;"></canvas>
         </div>
@@ -582,7 +615,6 @@
                     <div class="metric-item vertical-metric">下緣:<span id="metric-bot-od">--</span></div>
                 </div>
             </div>
-            <!-- 將鏡片展示區拓寬，移除原有的EP拉桿 -->
             <div class="eye-body-layout">
                 <div class="canvas-wrapper">
                     <canvas id="canvasOD"></canvas>
@@ -602,7 +634,6 @@
                     <div class="metric-item vertical-metric">下緣:<span id="metric-bot-os">--</span></div>
                 </div>
             </div>
-            <!-- 將鏡片展示區拓寬，移除原有的EP拉桿 -->
             <div class="eye-body-layout">
                 <div class="canvas-wrapper">
                     <canvas id="canvasOS"></canvas>
@@ -616,7 +647,6 @@
         <div class="control-panel">
             <div class="panel-title">右眼 OD 參數設定</div>
             
-            <!-- 將度數參數與EP拉桿並排 -->
             <div class="top-params-flex">
                 <div class="params-left">
                     <div class="control-row">
@@ -644,7 +674,6 @@
                     </div>
                 </div>
                 
-                <!-- 新的EP拉桿位置 -->
                 <div class="ep-slider-container">
                     <div class="ep-label">EP高</div>
                     <input type="range" id="ep-od" class="vertical-slider" min="10" max="45" step="0.5" value="24" oninput="syncAll()">
@@ -736,7 +765,6 @@
                     </div>
                 </div>
                 
-                <!-- 新的EP拉桿位置 -->
                 <div class="ep-slider-container">
                     <div class="ep-label">EP高</div>
                     <input type="range" id="ep-os" class="vertical-slider" min="10" max="45" step="0.5" value="24" oninput="syncAll()">
@@ -803,7 +831,7 @@
             viewMode: 'dual', // 'single' 僅水平, 'dual' 水平+垂直
             frameA: 52,
             frameB: 40,
-            frameED: 40, // 依要求預設為 40，不會與A強制連動
+            frameED: 40,
             frameDBL: 18,
             pdTotal: 64.0,
             od: { sph: -4.00, cyl: 0.00, axis: 180, index: 1.50, ct: 1.2, ep: 24, edgeType: 'V', ratio: 0.33, design: 'SPH' },
@@ -825,7 +853,6 @@
             syncAll();
         });
 
-        // 設定顯示模式
         function setViewMode(mode) {
             state.viewMode = mode;
             
@@ -838,11 +865,11 @@
             const vMetrics = document.querySelectorAll('.vertical-metric');
             
             if (mode === 'single') {
-                layouts.forEach(el => el.style.height = '200px'); // 高度降低
-                vMetrics.forEach(el => el.style.display = 'none'); // 隱藏上/下緣數據
+                layouts.forEach(el => el.style.height = '200px'); 
+                vMetrics.forEach(el => el.style.display = 'none'); 
             } else {
-                layouts.forEach(el => el.style.height = '340px'); // 恢復高畫布
-                vMetrics.forEach(el => el.style.display = 'block'); // 顯示上/下緣數據
+                layouts.forEach(el => el.style.height = '340px'); 
+                vMetrics.forEach(el => el.style.display = 'block'); 
             }
             
             setupCanvasResizing();
@@ -887,8 +914,8 @@
             validateAndSync();
         }
 
-        // 移除了 A寬 與 ED 的連動防呆
         function validateAndSync() {
+            // 在輸入時移除無效字元，確保即使是tel鍵盤也能轉為數字
             state.frameA = parseFloat(document.getElementById('frameA').value) || 50;
             let oldB = state.frameB;
             state.frameB = parseFloat(document.getElementById('frameB').value) || 40;
@@ -899,7 +926,6 @@
                 document.getElementById('ep-os').value = defaultEP;
             }
 
-            // ED 獨立運作
             state.frameED = parseFloat(document.getElementById('frameED').value) || 40;
             state.frameDBL = parseFloat(document.getElementById('frameDBL').value) || 16;
             state.pdTotal = parseFloat(document.getElementById('pdTotal').value) || 64;
@@ -907,6 +933,17 @@
             state.pdOS = parseFloat(document.getElementById('pdOS').value) || 32;
             
             syncAll();
+        }
+        
+        // 實體尺校正左右微調按鈕
+        function stepCalib(val) {
+            let el = document.getElementById('calibScale');
+            let cur = parseFloat(el.value);
+            let next = (cur + val).toFixed(2);
+            if (next >= 3 && next <= 8) {
+                el.value = next;
+                syncAll();
+            }
         }
 
         function setIndex(eye, value) {
@@ -1083,7 +1120,6 @@
             const powerV = eyeState.sph + eyeState.cyl * Math.pow(Math.cos(rad), 2);
 
             const decH = ((state.frameA + state.frameDBL) / 2) - pd;
-            const decV = ep - (state.frameB / 2); 
 
             let xNasal, xTemporal;
             if (type === 'OD') {
@@ -1125,7 +1161,6 @@
                 return r - Math.sqrt(val); 
             }
 
-            // 單視角時水平切面置中，雙視角時水平置左、垂直置右
             const cxH = isDual ? w * 0.42 : w / 2;
             const cyH = h / 2;
             
@@ -1213,7 +1248,7 @@
             ctx.textAlign = 'left'; ctx.fillText(type === 'OD' ? `鼻側 ${tRightStr}` : `顳側 ${tRightStr}`, Math.min(rightEdgeFrontH.x + 30, maxLineW), cyH + 5);
 
             // ==========================================
-            // 2. 繪製垂直橫切面 (Side View) - 僅雙視角模式顯示
+            // 2. 繪製垂直橫切面 (Side View)
             // ==========================================
             if (isDual) {
                 let pointsFrontV = [], pointsBackV = [];
