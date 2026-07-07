@@ -2,7 +2,11 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Apple Web App 全螢幕與縮放設定 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="南崁鏡片規劃">
     <title>大學南崁鏡片規劃軟體 - 雙視角專業版</title>
     <style>
         * {
@@ -17,7 +21,55 @@
             background-color: #f3f6f4;
             color: #2c3531;
             overflow-x: hidden;
+            /* 針對 iPad 加入主畫面的頂部安全距離 */
+            padding-top: env(safe-area-inset-top);
             padding-bottom: 40px;
+        }
+
+        /* ==========================================
+           強制橫向鎖定遮罩 (Portrait Intercept)
+           ========================================== */
+        #orientation-warning {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: rgba(44, 53, 49, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #ffffff;
+            z-index: 99999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        #orientation-warning .icon {
+            width: 80px; height: 80px; 
+            margin-bottom: 24px;
+            animation: rotateDevice 2.5s infinite ease-in-out;
+        }
+        
+        #orientation-warning h2 {
+            font-size: 24px; letter-spacing: 2px; margin-bottom: 8px;
+        }
+        
+        #orientation-warning p {
+            font-size: 14px; color: #a0b0a6;
+        }
+
+        @keyframes rotateDevice {
+            0% { transform: rotate(0deg); }
+            40% { transform: rotate(-90deg); }
+            60% { transform: rotate(-90deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        /* 偵測直向時顯示警告，隱藏主內容 */
+        @media screen and (orientation: portrait) {
+            #orientation-warning { display: flex !important; }
+            #app-content { display: none !important; }
+            body { padding: 0; overflow: hidden; background: #2c3531; }
         }
 
         /* 頂層頂部欄 */
@@ -262,6 +314,7 @@
             border-radius: 6px;
             border: 1px solid #c8e0d1;
             margin-left: 10px;
+            transition: all 0.2s;
         }
 
         .thickness-metrics {
@@ -542,331 +595,344 @@
 </head>
 <body>
 
-    <header class="top-header">
-        <div class="header-title-area">
-            <h1>大學南崁鏡片規劃軟體</h1>
-            <p>高階客製化智慧光學 雙視角 (水平/垂直) 動態演示系統</p>
-        </div>
-        <div class="system-status">
-            <div class="segmented-control" style="background:#4a6b5d; border: 1px solid #7a9a88;">
-                <button id="btn-mode-single" class="mode-toggle-btn" onclick="setViewMode('single')" style="color:#fff;">單視角(僅水平)</button>
-                <button id="btn-mode-dual" class="mode-toggle-btn active" onclick="setViewMode('dual')" style="color:#fff;">雙視角(水+垂)</button>
-            </div>
-            <div class="status-tag">裝配模式：全自動演算</div>
-        </div>
-    </header>
+    <!-- 強制旋轉提示畫面 -->
+    <div id="orientation-warning">
+        <!-- 畫一個旋轉 iPad 的 SVG -->
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+            <line x1="12" y1="18" x2="12.01" y2="18"></line>
+        </svg>
+        <h2>請旋轉您的 iPad</h2>
+        <p>此高階演示軟體專為橫向螢幕 (Landscape) 設計，<br>請將設備打橫以獲得最佳瀏覽體驗與準確比例。</p>
+    </div>
 
-    <section class="shared-frame-bar">
-        <div class="frame-inputs-container">
-            <div class="bar-section-title">
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12h3M18 12h3M6 12a4 4 0 0 1 8 0a4 4 0 0 1 8 0M10 12h4"/></svg>
-                    鏡框與瞳距指定參數 <span id="frame-display-title" style="color:#5e7e6b; font-weight:800; margin-left:8px; font-size:18px;">(52 □ 18)</span>
-                </div>
+    <div id="app-content">
+        <header class="top-header">
+            <div class="header-title-area">
+                <h1>大學南崁鏡片規劃軟體</h1>
+                <p>高階客製化智慧光學 雙視角 (水平/垂直) 動態演示系統</p>
             </div>
-            
-            <div class="inputs-row">
-                <div class="inline-input-group">
-                    <label>A寬</label>
-                    <input type="tel" id="frameA" value="52" oninput="validateAndSync()">
+            <div class="system-status">
+                <div class="segmented-control" style="background:#4a6b5d; border: 1px solid #7a9a88;">
+                    <button id="btn-mode-single" class="mode-toggle-btn" onclick="setViewMode('single')" style="color:#fff;">單視角(僅水平)</button>
+                    <button id="btn-mode-dual" class="mode-toggle-btn active" onclick="setViewMode('dual')" style="color:#fff;">雙視角(水+垂)</button>
                 </div>
-                <div class="inline-input-group">
-                    <label>DBL</label>
-                    <input type="tel" id="frameDBL" value="18" oninput="validateAndSync()">
-                </div>
-                <div class="inline-input-group">
-                    <label style="color:#2b6bb8;">B高</label>
-                    <input type="tel" id="frameB" value="40" oninput="validateAndSync()">
-                </div>
-                
-                <div class="inline-input-group" title="ED (有效直徑)為鏡框最大對角線，影響原片大小計算">
-                    <label style="color:#e67e22;">ED</label>
-                    <input type="tel" id="frameED" value="40" oninput="validateAndSync(true)">
-                </div>
-                
-                <div class="pd-separator"></div>
-                
-                <div class="inline-input-group">
-                    <label style="color:#d9534f;">總PD</label>
-                    <input type="tel" id="pdTotal" value="64.0" oninput="updatePDTotal()">
-                </div>
-                
-                <div class="pd-separator"></div>
-                
-                <div class="inline-input-group">
-                    <label style="color:#4a6b5d;">R.PD</label>
-                    <input type="tel" id="pdOD" value="32.0" oninput="updatePDSingle()">
-                </div>
-                <div class="inline-input-group">
-                    <label style="color:#617a72;">L.PD</label>
-                    <input type="tel" id="pdOS" value="32.0" oninput="updatePDSingle()">
-                </div>
+                <div class="status-tag">裝配模式：全自動演算</div>
             </div>
-            
-            <div class="blank-recommendation">
-                <div class="blank-item">
-                    <span class="blank-label">右眼 OD 原片直徑 (含EP)</span>
-                    <span class="blank-value" id="blank-od">Ø 65 mm</span>
-                </div>
-                <div class="blank-item">
-                    <span class="blank-label">左眼 OS 原片直徑 (含EP)</span>
-                    <span class="blank-value" id="blank-os">Ø 65 mm</span>
-                </div>
-            </div>
-        </div>
+        </header>
 
-        <div class="calibration-box">
-            <div style="font-size:13px; font-weight:700; color:#4a6b5d; margin-bottom:4px;">📏 iPad 實體比例校正</div>
-            <div style="font-size:12px; color:#555; margin-bottom:6px;">請將直尺貼齊螢幕，微調滑桿使下方 1cm 與直尺吻合：</div>
-            <div class="calibration-controls">
-                <button class="calib-btn" onclick="stepCalib(-0.05)">-</button>
-                <input type="range" class="horizontal-slider" id="calibScale" min="3" max="8" step="0.05" value="4.05" oninput="syncAll()" style="flex:1;">
-                <button class="calib-btn" onclick="stepCalib(0.05)">+</button>
-                <span id="calib-val" style="font-weight:bold; font-size:14px; color:#2c3531; min-width:45px; text-align:right;">4.05x</span>
-            </div>
-            <canvas id="rulerCanvas" width="300" height="35" style="margin-top:8px;"></canvas>
-        </div>
-    </section>
-
-    <main class="display-container">
-        <!-- 右眼顯示卡 OD -->
-        <div class="eye-card">
-            <div class="eye-card-header">
-                <div style="display:flex; align-items:center;">
-                    <div class="eye-badge od-badge">右眼 OD 面向客戶視角</div>
-                    <div class="power-display" id="power-display-od">S: -4.00 | C: 0.00 | A: 180°</div>
-                </div>
-                <div class="thickness-metrics">
-                    <div class="metric-item">CT:<span id="metric-ct-od">1.2</span></div>
-                    <div class="metric-item">顳側:<span id="metric-temp-od">--</span></div>
-                    <div class="metric-item">鼻側:<span id="metric-nasal-od">--</span></div>
-                    <div class="metric-item vertical-metric">上緣:<span id="metric-top-od">--</span></div>
-                    <div class="metric-item vertical-metric">下緣:<span id="metric-bot-od">--</span></div>
-                </div>
-            </div>
-            <div class="eye-body-layout">
-                <div class="canvas-wrapper">
-                    <canvas id="canvasOD"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- 左眼顯示卡 OS -->
-        <div class="eye-card">
-            <div class="eye-card-header">
-                <div style="display:flex; align-items:center;">
-                    <div class="eye-badge os-badge">左眼 OS 面向客戶視角</div>
-                    <div class="power-display" id="power-display-os">S: -4.00 | C: 0.00 | A: 180°</div>
-                </div>
-                <div class="thickness-metrics">
-                    <div class="metric-item">CT:<span id="metric-ct-os">1.2</span></div>
-                    <div class="metric-item">鼻側:<span id="metric-nasal-os">--</span></div>
-                    <div class="metric-item">顳側:<span id="metric-temp-os">--</span></div>
-                    <div class="metric-item vertical-metric">上緣:<span id="metric-top-os">--</span></div>
-                    <div class="metric-item vertical-metric">下緣:<span id="metric-bot-os">--</span></div>
-                </div>
-            </div>
-            <div class="eye-body-layout">
-                <div class="canvas-wrapper">
-                    <canvas id="canvasOS"></canvas>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <footer class="controls-container">
-        <!-- 右眼控制面板 -->
-        <div class="control-panel">
-            <div class="panel-title">
-                右眼 OD 參數設定
-                <button class="toggle-params-btn" id="btn-toggle-od" onclick="toggleParams('od')">收起度數/EP</button>
-            </div>
-            
-            <div class="top-params-flex" id="params-flex-od">
-                <div class="params-left">
-                    <div class="control-row">
-                        <div class="control-label-row">
-                            <label>球面度數 (SPH)</label>
-                            <div class="value-display" id="val-sph-od">-4.00</div>
-                        </div>
-                        <input type="range" class="horizontal-slider" id="sph-od" min="-15.00" max="8.00" step="0.25" value="-4.00" oninput="syncAll()">
+        <section class="shared-frame-bar">
+            <div class="frame-inputs-container">
+                <div class="bar-section-title">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12h3M18 12h3M6 12a4 4 0 0 1 8 0a4 4 0 0 1 8 0M10 12h4"/></svg>
+                        鏡框與瞳距指定參數 <span id="frame-display-title" style="color:#5e7e6b; font-weight:800; margin-left:8px; font-size:18px;">(52 □ 18)</span>
                     </div>
-
-                    <div class="control-row">
-                        <div class="control-label-row">
-                            <label>散光度數 (CYL)</label>
-                            <div class="value-display" id="val-cyl-od">0.00</div>
-                        </div>
-                        <input type="range" class="horizontal-slider" id="cyl-od" min="-6.00" max="0.00" step="0.25" value="0.00" oninput="syncAll()">
+                </div>
+                
+                <div class="inputs-row">
+                    <div class="inline-input-group">
+                        <label>A寬</label>
+                        <input type="tel" id="frameA" value="52" oninput="validateAndSync()">
+                    </div>
+                    <div class="inline-input-group">
+                        <label>DBL</label>
+                        <input type="tel" id="frameDBL" value="18" oninput="validateAndSync()">
+                    </div>
+                    <div class="inline-input-group">
+                        <label style="color:#2b6bb8;">B高</label>
+                        <input type="tel" id="frameB" value="40" oninput="validateAndSync()">
                     </div>
                     
-                    <div class="control-row">
-                        <div class="control-label-row">
-                            <label>散光軸度 (AXIS)</label>
-                            <div class="value-display" id="val-axis-od">180°</div>
-                        </div>
-                        <input type="range" class="horizontal-slider" id="axis-od" min="0" max="180" step="1" value="180" oninput="syncAll()">
-                    </div>
-                </div>
-                
-                <div class="ep-slider-container">
-                    <div class="ep-label">EP高</div>
-                    <input type="range" id="ep-od" class="vertical-slider" min="10" max="45" step="0.5" value="24" oninput="syncAll()">
-                    <div class="ep-val" id="val-ep-od">24.0</div>
-                </div>
-            </div>
-            
-            <div class="control-row">
-                <div class="control-label-row"><label>光學面型設計</label></div>
-                <div class="segmented-control design-control" id="design-type-od">
-                    <button class="active" onclick="setDesignType('od', 'SPH')">球面<br><span style="font-size:9px; font-weight:normal;">Spherical</span></button>
-                    <button onclick="setDesignType('od', 'ASP')">非球面<br><span style="font-size:9px; font-weight:normal;">Aspheric</span></button>
-                    <button onclick="setDesignType('od', 'DAS')">雙面非球面<br><span style="font-size:9px; font-weight:normal;">Double-Asph</span></button>
-                </div>
-            </div>
-
-            <div class="control-row">
-                <div class="control-label-row"><label>鏡片材質折射率 (n)</label></div>
-                <div class="index-grid" id="index-grid-od">
-                    <button class="active" onclick="setIndex('od', 1.50)">1.50<span>樹脂</span></button>
-                    <button onclick="setIndex('od', 1.56)">1.56<span>樹脂</span></button>
-                    <button onclick="setIndex('od', 1.60)">1.60<span>樹脂</span></button>
-                    <button onclick="setIndex('od', 1.67)">1.67<span>樹脂</span></button>
-                    <button onclick="setIndex('od', 1.74)">1.74<span>樹脂</span></button>
-                    <button onclick="setIndex('od', 1.76)">1.76<span>樹脂</span></button>
-                    <button onclick="setIndex('od', 1.80)">1.80<span>玻璃</span></button>
-                    <button onclick="setIndex('od', 1.90)">1.90<span>玻璃</span></button>
-                </div>
-            </div>
-
-            <div class="control-row">
-                <div class="control-label-row">
-                    <label>中心厚度 (CT)</label>
-                    <div class="value-display" id="val-ct-od">1.2 mm</div>
-                </div>
-                <div class="ct-stepper-container">
-                    <button class="stepper-btn" onclick="stepCT('od', -0.1)">-</button>
-                    <input type="range" class="horizontal-slider" id="ct-od" min="0.8" max="5.0" step="0.1" value="1.2" oninput="syncAll()">
-                    <button class="stepper-btn" onclick="stepCT('od', 0.1)">+</button>
-                </div>
-            </div>
-
-            <div class="control-row">
-                <div class="control-label-row"><label>邊緣加工工藝</label></div>
-                <div class="segmented-control" id="edge-type-od">
-                    <button class="active" onclick="setEdgeType('od', 'V')">V溝 (全框)</button>
-                    <button onclick="setEdgeType('od', 'G')">車溝 (半框)</button>
-                    <button onclick="setEdgeType('od', 'F')">平邊 (無框)</button>
-                </div>
-            </div>
-
-            <div class="control-row" id="ratio-row-od">
-                <div class="control-label-row">
-                    <label>溝槽/山角位置 (前表面起)</label>
-                    <div class="value-display" id="val-ratio-od">33%</div>
-                </div>
-                <input type="range" class="horizontal-slider" id="ratio-od" min="10" max="90" step="1" value="33" oninput="syncAll()">
-            </div>
-        </div>
-
-        <!-- 左眼控制面板 -->
-        <div class="control-panel">
-            <div class="panel-title">
-                左眼 OS 參數設定
-                <button class="toggle-params-btn" id="btn-toggle-os" onclick="toggleParams('os')">收起度數/EP</button>
-            </div>
-            
-            <div class="top-params-flex" id="params-flex-os">
-                <div class="params-left">
-                    <div class="control-row">
-                        <div class="control-label-row">
-                            <label>球面度數 (SPH)</label>
-                            <div class="value-display" id="val-sph-os">-4.00</div>
-                        </div>
-                        <input type="range" class="horizontal-slider" id="sph-os" min="-15.00" max="8.00" step="0.25" value="-4.00" oninput="syncAll()">
-                    </div>
-
-                    <div class="control-row">
-                        <div class="control-label-row">
-                            <label>散光度數 (CYL)</label>
-                            <div class="value-display" id="val-cyl-os">0.00</div>
-                        </div>
-                        <input type="range" class="horizontal-slider" id="cyl-os" min="-6.00" max="0.00" step="0.25" value="0.00" oninput="syncAll()">
+                    <div class="inline-input-group" title="ED (有效直徑)為鏡框最大對角線，影響原片大小計算">
+                        <label style="color:#e67e22;">ED</label>
+                        <input type="tel" id="frameED" value="40" oninput="validateAndSync(true)">
                     </div>
                     
-                    <div class="control-row">
-                        <div class="control-label-row">
-                            <label>散光軸度 (AXIS)</label>
-                            <div class="value-display" id="val-axis-os">180°</div>
-                        </div>
-                        <input type="range" class="horizontal-slider" id="axis-os" min="0" max="180" step="1" value="180" oninput="syncAll()">
+                    <div class="pd-separator"></div>
+                    
+                    <div class="inline-input-group">
+                        <label style="color:#d9534f;">總PD</label>
+                        <input type="tel" id="pdTotal" value="64.0" oninput="updatePDTotal()">
+                    </div>
+                    
+                    <div class="pd-separator"></div>
+                    
+                    <div class="inline-input-group">
+                        <label style="color:#4a6b5d;">R.PD</label>
+                        <input type="tel" id="pdOD" value="32.0" oninput="updatePDSingle()">
+                    </div>
+                    <div class="inline-input-group">
+                        <label style="color:#617a72;">L.PD</label>
+                        <input type="tel" id="pdOS" value="32.0" oninput="updatePDSingle()">
                     </div>
                 </div>
                 
-                <div class="ep-slider-container">
-                    <div class="ep-label">EP高</div>
-                    <input type="range" id="ep-os" class="vertical-slider" min="10" max="45" step="0.5" value="24" oninput="syncAll()">
-                    <div class="ep-val" id="val-ep-os">24.0</div>
-                </div>
-            </div>
-            
-            <div class="control-row">
-                <div class="control-label-row"><label>光學面型設計</label></div>
-                <div class="segmented-control design-control" id="design-type-os">
-                    <button class="active" onclick="setDesignType('os', 'SPH')">球面<br><span style="font-size:9px; font-weight:normal;">Spherical</span></button>
-                    <button onclick="setDesignType('os', 'ASP')">非球面<br><span style="font-size:9px; font-weight:normal;">Aspheric</span></button>
-                    <button onclick="setDesignType('os', 'DAS')">雙面非球面<br><span style="font-size:9px; font-weight:normal;">Double-Asph</span></button>
+                <div class="blank-recommendation">
+                    <div class="blank-item">
+                        <span class="blank-label">右眼 OD 原片直徑 (含EP)</span>
+                        <span class="blank-value" id="blank-od">Ø 65 mm</span>
+                    </div>
+                    <div class="blank-item">
+                        <span class="blank-label">左眼 OS 原片直徑 (含EP)</span>
+                        <span class="blank-value" id="blank-os">Ø 65 mm</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="control-row">
-                <div class="control-label-row"><label>鏡片材質折射率 (n)</label></div>
-                <div class="index-grid" id="index-grid-os">
-                    <button class="active" onclick="setIndex('os', 1.50)">1.50<span>樹脂</span></button>
-                    <button onclick="setIndex('os', 1.56)">1.56<span>樹脂</span></button>
-                    <button onclick="setIndex('os', 1.60)">1.60<span>樹脂</span></button>
-                    <button onclick="setIndex('os', 1.67)">1.67<span>樹脂</span></button>
-                    <button onclick="setIndex('os', 1.74)">1.74<span>樹脂</span></button>
-                    <button onclick="setIndex('os', 1.76)">1.76<span>樹脂</span></button>
-                    <button onclick="setIndex('os', 1.80)">1.80<span>玻璃</span></button>
-                    <button onclick="setIndex('os', 1.90)">1.90<span>玻璃</span></button>
+            <div class="calibration-box">
+                <div style="font-size:13px; font-weight:700; color:#4a6b5d; margin-bottom:4px;">📏 iPad 實體比例校正</div>
+                <div style="font-size:12px; color:#555; margin-bottom:6px;">請將直尺貼齊螢幕，微調滑桿使下方 1cm 與直尺吻合：</div>
+                <div class="calibration-controls">
+                    <button class="calib-btn" onclick="stepCalib(-0.05)">-</button>
+                    <input type="range" class="horizontal-slider" id="calibScale" min="3" max="8" step="0.05" value="4.05" oninput="syncAll()" style="flex:1;">
+                    <button class="calib-btn" onclick="stepCalib(0.05)">+</button>
+                    <span id="calib-val" style="font-weight:bold; font-size:14px; color:#2c3531; min-width:45px; text-align:right;">4.05x</span>
+                </div>
+                <canvas id="rulerCanvas" width="300" height="35" style="margin-top:8px;"></canvas>
+            </div>
+        </section>
+
+        <main class="display-container">
+            <!-- 右眼顯示卡 OD -->
+            <div class="eye-card">
+                <div class="eye-card-header">
+                    <div style="display:flex; align-items:center;">
+                        <div class="eye-badge od-badge">右眼 OD 面向客戶視角</div>
+                        <div class="power-display" id="power-display-od">S: -4.00 | C: 0.00 | A: 180°</div>
+                    </div>
+                    <div class="thickness-metrics">
+                        <div class="metric-item">CT:<span id="metric-ct-od">1.2</span></div>
+                        <div class="metric-item">顳側:<span id="metric-temp-od">--</span></div>
+                        <div class="metric-item">鼻側:<span id="metric-nasal-od">--</span></div>
+                        <div class="metric-item vertical-metric">上緣:<span id="metric-top-od">--</span></div>
+                        <div class="metric-item vertical-metric">下緣:<span id="metric-bot-od">--</span></div>
+                    </div>
+                </div>
+                <div class="eye-body-layout">
+                    <div class="canvas-wrapper">
+                        <canvas id="canvasOD"></canvas>
+                    </div>
                 </div>
             </div>
 
-            <div class="control-row">
-                <div class="control-label-row">
-                    <label>中心厚度 (CT)</label>
-                    <div class="value-display" id="val-ct-os">1.2 mm</div>
+            <!-- 左眼顯示卡 OS -->
+            <div class="eye-card">
+                <div class="eye-card-header">
+                    <div style="display:flex; align-items:center;">
+                        <div class="eye-badge os-badge">左眼 OS 面向客戶視角</div>
+                        <div class="power-display" id="power-display-os">S: -4.00 | C: 0.00 | A: 180°</div>
+                    </div>
+                    <div class="thickness-metrics">
+                        <div class="metric-item">CT:<span id="metric-ct-os">1.2</span></div>
+                        <div class="metric-item">鼻側:<span id="metric-nasal-os">--</span></div>
+                        <div class="metric-item">顳側:<span id="metric-temp-os">--</span></div>
+                        <div class="metric-item vertical-metric">上緣:<span id="metric-top-os">--</span></div>
+                        <div class="metric-item vertical-metric">下緣:<span id="metric-bot-os">--</span></div>
+                    </div>
                 </div>
-                <div class="ct-stepper-container">
-                    <button class="stepper-btn" onclick="stepCT('os', -0.1)">-</button>
-                    <input type="range" class="horizontal-slider" id="ct-os" min="0.8" max="5.0" step="0.1" value="1.2" oninput="syncAll()">
-                    <button class="stepper-btn" onclick="stepCT('os', 0.1)">+</button>
+                <div class="eye-body-layout">
+                    <div class="canvas-wrapper">
+                        <canvas id="canvasOS"></canvas>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="controls-container">
+            <!-- 右眼控制面板 -->
+            <div class="control-panel">
+                <div class="panel-title">
+                    右眼 OD 參數設定
+                    <button class="toggle-params-btn" id="btn-toggle-od" onclick="toggleParams('od')">收起度數/EP</button>
+                </div>
+                
+                <div class="top-params-flex" id="params-flex-od">
+                    <div class="params-left">
+                        <div class="control-row">
+                            <div class="control-label-row">
+                                <label>球面度數 (SPH)</label>
+                                <div class="value-display" id="val-sph-od">-4.00</div>
+                            </div>
+                            <input type="range" class="horizontal-slider" id="sph-od" min="-15.00" max="8.00" step="0.25" value="-4.00" oninput="syncAll()">
+                        </div>
+
+                        <div class="control-row">
+                            <div class="control-label-row">
+                                <label>散光度數 (CYL)</label>
+                                <div class="value-display" id="val-cyl-od">0.00</div>
+                            </div>
+                            <input type="range" class="horizontal-slider" id="cyl-od" min="-6.00" max="0.00" step="0.25" value="0.00" oninput="syncAll()">
+                        </div>
+                        
+                        <div class="control-row">
+                            <div class="control-label-row">
+                                <label>散光軸度 (AXIS)</label>
+                                <div class="value-display" id="val-axis-od">180°</div>
+                            </div>
+                            <input type="range" class="horizontal-slider" id="axis-od" min="0" max="180" step="1" value="180" oninput="syncAll()">
+                        </div>
+                    </div>
+                    
+                    <div class="ep-slider-container">
+                        <div class="ep-label">EP高</div>
+                        <input type="range" id="ep-od" class="vertical-slider" min="10" max="45" step="0.5" value="24" oninput="syncAll()">
+                        <div class="ep-val" id="val-ep-od">24.0</div>
+                    </div>
+                </div>
+                
+                <div class="control-row">
+                    <div class="control-label-row"><label>光學面型設計</label></div>
+                    <div class="segmented-control design-control" id="design-type-od">
+                        <button class="active" onclick="setDesignType('od', 'SPH')">球面<br><span style="font-size:9px; font-weight:normal;">Spherical</span></button>
+                        <button onclick="setDesignType('od', 'ASP')">非球面<br><span style="font-size:9px; font-weight:normal;">Aspheric</span></button>
+                        <button onclick="setDesignType('od', 'DAS')">雙面非球面<br><span style="font-size:9px; font-weight:normal;">Double-Asph</span></button>
+                    </div>
+                </div>
+
+                <div class="control-row">
+                    <div class="control-label-row"><label>鏡片材質折射率 (n)</label></div>
+                    <div class="index-grid" id="index-grid-od">
+                        <button class="active" onclick="setIndex('od', 1.50)">1.50<span>樹脂</span></button>
+                        <button onclick="setIndex('od', 1.56)">1.56<span>樹脂</span></button>
+                        <button onclick="setIndex('od', 1.60)">1.60<span>樹脂</span></button>
+                        <button onclick="setIndex('od', 1.67)">1.67<span>樹脂</span></button>
+                        <button onclick="setIndex('od', 1.74)">1.74<span>樹脂</span></button>
+                        <button onclick="setIndex('od', 1.76)">1.76<span>樹脂</span></button>
+                        <button onclick="setIndex('od', 1.80)">1.80<span>玻璃</span></button>
+                        <button onclick="setIndex('od', 1.90)">1.90<span>玻璃</span></button>
+                    </div>
+                </div>
+
+                <div class="control-row">
+                    <div class="control-label-row">
+                        <label>中心厚度 (CT)</label>
+                        <div class="value-display" id="val-ct-od">1.2 mm</div>
+                    </div>
+                    <div class="ct-stepper-container">
+                        <button class="stepper-btn" onclick="stepCT('od', -0.1)">-</button>
+                        <input type="range" class="horizontal-slider" id="ct-od" min="0.8" max="5.0" step="0.1" value="1.2" oninput="syncAll()">
+                        <button class="stepper-btn" onclick="stepCT('od', 0.1)">+</button>
+                    </div>
+                </div>
+
+                <div class="control-row">
+                    <div class="control-label-row"><label>邊緣加工工藝</label></div>
+                    <div class="segmented-control" id="edge-type-od">
+                        <button class="active" onclick="setEdgeType('od', 'V')">V溝 (全框)</button>
+                        <button onclick="setEdgeType('od', 'G')">車溝 (半框)</button>
+                        <button onclick="setEdgeType('od', 'F')">平邊 (無框)</button>
+                    </div>
+                </div>
+
+                <div class="control-row" id="ratio-row-od">
+                    <div class="control-label-row">
+                        <label>溝槽/山角位置 (前表面起)</label>
+                        <div class="value-display" id="val-ratio-od">33%</div>
+                    </div>
+                    <input type="range" class="horizontal-slider" id="ratio-od" min="10" max="90" step="1" value="33" oninput="syncAll()">
                 </div>
             </div>
 
-            <div class="control-row">
-                <div class="control-label-row"><label>邊緣加工工藝</label></div>
-                <div class="segmented-control" id="edge-type-os">
-                    <button class="active" onclick="setEdgeType('os', 'V')">V溝 (全框)</button>
-                    <button onclick="setEdgeType('os', 'G')">車溝 (半框)</button>
-                    <button onclick="setEdgeType('os', 'F')">平邊 (無框)</button>
+            <!-- 左眼控制面板 -->
+            <div class="control-panel">
+                <div class="panel-title">
+                    左眼 OS 參數設定
+                    <button class="toggle-params-btn" id="btn-toggle-os" onclick="toggleParams('os')">收起度數/EP</button>
                 </div>
-            </div>
+                
+                <div class="top-params-flex" id="params-flex-os">
+                    <div class="params-left">
+                        <div class="control-row">
+                            <div class="control-label-row">
+                                <label>球面度數 (SPH)</label>
+                                <div class="value-display" id="val-sph-os">-4.00</div>
+                            </div>
+                            <input type="range" class="horizontal-slider" id="sph-os" min="-15.00" max="8.00" step="0.25" value="-4.00" oninput="syncAll()">
+                        </div>
 
-            <div class="control-row" id="ratio-row-os">
-                <div class="control-label-row">
-                    <label>溝槽/山角位置 (前表面起)</label>
-                    <div class="value-display" id="val-ratio-os">33%</div>
+                        <div class="control-row">
+                            <div class="control-label-row">
+                                <label>散光度數 (CYL)</label>
+                                <div class="value-display" id="val-cyl-os">0.00</div>
+                            </div>
+                            <input type="range" class="horizontal-slider" id="cyl-os" min="-6.00" max="0.00" step="0.25" value="0.00" oninput="syncAll()">
+                        </div>
+                        
+                        <div class="control-row">
+                            <div class="control-label-row">
+                                <label>散光軸度 (AXIS)</label>
+                                <div class="value-display" id="val-axis-os">180°</div>
+                            </div>
+                            <input type="range" class="horizontal-slider" id="axis-os" min="0" max="180" step="1" value="180" oninput="syncAll()">
+                        </div>
+                    </div>
+                    
+                    <div class="ep-slider-container">
+                        <div class="ep-label">EP高</div>
+                        <input type="range" id="ep-os" class="vertical-slider" min="10" max="45" step="0.5" value="24" oninput="syncAll()">
+                        <div class="ep-val" id="val-ep-os">24.0</div>
+                    </div>
                 </div>
-                <input type="range" class="horizontal-slider" id="ratio-os" min="10" max="90" step="1" value="33" oninput="syncAll()">
+                
+                <div class="control-row">
+                    <div class="control-label-row"><label>光學面型設計</label></div>
+                    <div class="segmented-control design-control" id="design-type-os">
+                        <button class="active" onclick="setDesignType('os', 'SPH')">球面<br><span style="font-size:9px; font-weight:normal;">Spherical</span></button>
+                        <button onclick="setDesignType('os', 'ASP')">非球面<br><span style="font-size:9px; font-weight:normal;">Aspheric</span></button>
+                        <button onclick="setDesignType('os', 'DAS')">雙面非球面<br><span style="font-size:9px; font-weight:normal;">Double-Asph</span></button>
+                    </div>
+                </div>
+
+                <div class="control-row">
+                    <div class="control-label-row"><label>鏡片材質折射率 (n)</label></div>
+                    <div class="index-grid" id="index-grid-os">
+                        <button class="active" onclick="setIndex('os', 1.50)">1.50<span>樹脂</span></button>
+                        <button onclick="setIndex('os', 1.56)">1.56<span>樹脂</span></button>
+                        <button onclick="setIndex('os', 1.60)">1.60<span>樹脂</span></button>
+                        <button onclick="setIndex('os', 1.67)">1.67<span>樹脂</span></button>
+                        <button onclick="setIndex('os', 1.74)">1.74<span>樹脂</span></button>
+                        <button onclick="setIndex('os', 1.76)">1.76<span>樹脂</span></button>
+                        <button onclick="setIndex('os', 1.80)">1.80<span>玻璃</span></button>
+                        <button onclick="setIndex('os', 1.90)">1.90<span>玻璃</span></button>
+                    </div>
+                </div>
+
+                <div class="control-row">
+                    <div class="control-label-row">
+                        <label>中心厚度 (CT)</label>
+                        <div class="value-display" id="val-ct-os">1.2 mm</div>
+                    </div>
+                    <div class="ct-stepper-container">
+                        <button class="stepper-btn" onclick="stepCT('os', -0.1)">-</button>
+                        <input type="range" class="horizontal-slider" id="ct-os" min="0.8" max="5.0" step="0.1" value="1.2" oninput="syncAll()">
+                        <button class="stepper-btn" onclick="stepCT('os', 0.1)">+</button>
+                    </div>
+                </div>
+
+                <div class="control-row">
+                    <div class="control-label-row"><label>邊緣加工工藝</label></div>
+                    <div class="segmented-control" id="edge-type-os">
+                        <button class="active" onclick="setEdgeType('os', 'V')">V溝 (全框)</button>
+                        <button onclick="setEdgeType('os', 'G')">車溝 (半框)</button>
+                        <button onclick="setEdgeType('os', 'F')">平邊 (無框)</button>
+                    </div>
+                </div>
+
+                <div class="control-row" id="ratio-row-os">
+                    <div class="control-label-row">
+                        <label>溝槽/山角位置 (前表面起)</label>
+                        <div class="value-display" id="val-ratio-os">33%</div>
+                    </div>
+                    <input type="range" class="horizontal-slider" id="ratio-os" min="10" max="90" step="1" value="33" oninput="syncAll()">
+                </div>
             </div>
-        </div>
-    </footer>
+        </footer>
+    </div>
 
     <script>
         const state = {
-            viewMode: 'dual', // 'single' 僅水平, 'dual' 水平+垂直
+            viewMode: 'dual', 
             frameA: 52,
             frameB: 40,
             frameED: 40,
@@ -891,7 +957,6 @@
             syncAll();
         });
 
-        // 參數收合功能
         function toggleParams(eye) {
             const flex = document.getElementById(`params-flex-${eye}`);
             const btn = document.getElementById(`btn-toggle-${eye}`);
@@ -1114,7 +1179,6 @@
             return recommend >= minBlank ? `Ø ${recommend} mm` : `> Ø 80 (特製)`;
         }
 
-        // 限定 clamp 函數，確保邊緣工藝不會畫出鏡片實體範圍
         function clamp(val, min, max) {
             return Math.max(min, Math.min(val, max));
         }
@@ -1136,7 +1200,6 @@
                 document.getElementById(`val-ratio-${eye}`).innerText = `${Math.round(state[eye].ratio*100)}%`;
                 document.getElementById(`metric-ct-${eye}`).innerText = state[eye].ct.toFixed(1);
                 
-                // 更新上方的 S/C/A 顯示
                 document.getElementById(`power-display-${eye}`).innerText = `S: ${formatDegree(state[eye].sph)} | C: ${formatDegree(state[eye].cyl)} | A: ${state[eye].axis}°`;
             });
 
@@ -1177,7 +1240,6 @@
             const powerV = eyeState.sph + eyeState.cyl * Math.pow(Math.cos(rad), 2);
 
             const decH = ((state.frameA + state.frameDBL) / 2) - pd;
-            const decV = ep - (state.frameB / 2); 
 
             let xNasal, xTemporal;
             if (type === 'OD') {
@@ -1371,40 +1433,37 @@
             ctx.fillText(designText, cxH, h - 15);
         }
 
-        // 精確的 V溝 / 車溝 繪製邏輯 (包含 1.5mm 固定底寬與平邊延伸)
         function drawEdgeProfilePath(ctx, frontPt, backPt, direction, type, ratio, mmToPx, isReverse, isVertical) {
             if(isVertical) {
-                // 垂直切面：邊緣沿著 X 軸連接 (厚度為 X 軸差)
                 const edgeThicknessPx = backPt.x - frontPt.x;
                 const midX = frontPt.x + edgeThicknessPx * ratio;
                 const edgeWidthPx = 0.8 * mmToPx; 
 
                 if (type === 'V') {
                     let peakY = frontPt.y + direction * edgeWidthPx;
-                    let vBasePx = 1.5 * mmToPx; // 真實 V 溝底寬約 1.5mm
+                    let vBasePx = 1.5 * mmToPx; 
                     let vStart = midX - vBasePx / 2;
                     let vEnd = midX + vBasePx / 2;
                     
-                    // 確保 V 溝不會畫出鏡片範圍
                     let minX = Math.min(frontPt.x, backPt.x);
                     let maxX = Math.max(frontPt.x, backPt.x);
                     vStart = clamp(vStart, minX, maxX);
                     vEnd = clamp(vEnd, minX, maxX);
 
                     if (isReverse) {
-                        ctx.lineTo(vEnd, frontPt.y);    // 平切到 V溝結束點
-                        ctx.lineTo(midX, peakY);        // 畫出尖端
-                        ctx.lineTo(vStart, frontPt.y);  // 畫回 V溝起始點
-                        ctx.lineTo(frontPt.x, frontPt.y); // 平切到最前緣
+                        ctx.lineTo(vEnd, frontPt.y);    
+                        ctx.lineTo(midX, peakY);        
+                        ctx.lineTo(vStart, frontPt.y);  
+                        ctx.lineTo(frontPt.x, frontPt.y); 
                     } else {
-                        ctx.lineTo(vStart, frontPt.y);  // 平切到 V溝起始點
-                        ctx.lineTo(midX, peakY);        // 畫出尖端
-                        ctx.lineTo(vEnd, frontPt.y);    // 畫回 V溝結束點
-                        ctx.lineTo(backPt.x, backPt.y); // 平切到最後緣
+                        ctx.lineTo(vStart, frontPt.y);  
+                        ctx.lineTo(midX, peakY);        
+                        ctx.lineTo(vEnd, frontPt.y);    
+                        ctx.lineTo(backPt.x, backPt.y); 
                     }
                 } else if (type === 'G') {
                     let grooveInY = frontPt.y - direction * (0.6 * mmToPx);
-                    let grooveWidthPx = 0.8 * mmToPx; // 車溝寬度維持 0.8mm
+                    let grooveWidthPx = 0.8 * mmToPx; 
                     
                     let gStart = midX - grooveWidthPx / 2;
                     let gEnd = midX + grooveWidthPx / 2;
@@ -1426,14 +1485,13 @@
                     ctx.lineTo(isReverse ? frontPt.x : backPt.x, isReverse ? frontPt.y : backPt.y);
                 }
             } else {
-                // 水平切面：邊緣沿著 Y 軸連接 (厚度為 Y 軸差)
                 const edgeThicknessPx = backPt.y - frontPt.y;
                 const midY = frontPt.y + edgeThicknessPx * ratio;
                 const edgeWidthPx = 0.8 * mmToPx; 
 
                 if (type === 'V') {
                     let peakX = frontPt.x + direction * edgeWidthPx;
-                    let vBasePx = 1.5 * mmToPx; // 真實 V 溝底寬約 1.5mm
+                    let vBasePx = 1.5 * mmToPx; 
                     
                     let y1, y2;
                     if (frontPt.y < backPt.y) {
@@ -1444,7 +1502,6 @@
                         y2 = midY - vBasePx / 2;
                     }
 
-                    // 確保不會超出鏡片範圍
                     let minY = Math.min(frontPt.y, backPt.y);
                     let maxY = Math.max(frontPt.y, backPt.y);
                     y1 = clamp(y1, minY, maxY);
