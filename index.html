@@ -122,7 +122,6 @@
             color: #2c3531;
             background-color: #f9faf9;
             transition: all 0.2s;
-            /* 移除預設的上下箭頭 (Spinner) */
             -moz-appearance: textfield;
         }
         .inline-input-group input::-webkit-outer-spin-button,
@@ -253,6 +252,18 @@
         .od-badge { background-color: #4a6b5d; }
         .os-badge { background-color: #617a72; }
 
+        /* S/C/A 顯示塊 */
+        .power-display {
+            font-size: 12px;
+            font-weight: 700;
+            color: #4a6b5d;
+            background: #eef5f1;
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid #c8e0d1;
+            margin-left: 10px;
+        }
+
         .thickness-metrics {
             display: flex;
             flex-wrap: wrap;
@@ -328,11 +339,27 @@
             padding-left: 8px;
         }
 
+        /* 收合按鈕 */
+        .toggle-params-btn {
+            margin-left: auto;
+            font-size: 11px;
+            padding: 4px 10px;
+            border: 1px solid #7a9a88;
+            background: #f4f7f5;
+            color: #4a5a51;
+            cursor: pointer;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .toggle-params-btn:active { background: #e2eae5; }
+
         .top-params-flex {
             display: flex;
             gap: 15px;
             margin-bottom: 12px;
             align-items: stretch;
+            transition: max-height 0.3s ease;
         }
         
         .params-left {
@@ -539,7 +566,6 @@
             </div>
             
             <div class="inputs-row">
-                <!-- 將 type="number" 改為 type="tel" 以確保在 iPad 上強制彈出數字鍵盤 -->
                 <div class="inline-input-group">
                     <label>A寬</label>
                     <input type="tel" id="frameA" value="52" oninput="validateAndSync()">
@@ -594,9 +620,9 @@
             <div style="font-size:12px; color:#555; margin-bottom:6px;">請將直尺貼齊螢幕，微調滑桿使下方 1cm 與直尺吻合：</div>
             <div class="calibration-controls">
                 <button class="calib-btn" onclick="stepCalib(-0.05)">-</button>
-                <input type="range" class="horizontal-slider" id="calibScale" min="3" max="8" step="0.05" value="5.0" oninput="syncAll()" style="flex:1;">
+                <input type="range" class="horizontal-slider" id="calibScale" min="3" max="8" step="0.05" value="4.05" oninput="syncAll()" style="flex:1;">
                 <button class="calib-btn" onclick="stepCalib(0.05)">+</button>
-                <span id="calib-val" style="font-weight:bold; font-size:14px; color:#2c3531; min-width:45px; text-align:right;">5.00x</span>
+                <span id="calib-val" style="font-weight:bold; font-size:14px; color:#2c3531; min-width:45px; text-align:right;">4.05x</span>
             </div>
             <canvas id="rulerCanvas" width="300" height="35" style="margin-top:8px;"></canvas>
         </div>
@@ -606,7 +632,10 @@
         <!-- 右眼顯示卡 OD -->
         <div class="eye-card">
             <div class="eye-card-header">
-                <div class="eye-badge od-badge">右眼 OD 面向客戶視角</div>
+                <div style="display:flex; align-items:center;">
+                    <div class="eye-badge od-badge">右眼 OD 面向客戶視角</div>
+                    <div class="power-display" id="power-display-od">S: -4.00 | C: 0.00 | A: 180°</div>
+                </div>
                 <div class="thickness-metrics">
                     <div class="metric-item">CT:<span id="metric-ct-od">1.2</span></div>
                     <div class="metric-item">顳側:<span id="metric-temp-od">--</span></div>
@@ -625,7 +654,10 @@
         <!-- 左眼顯示卡 OS -->
         <div class="eye-card">
             <div class="eye-card-header">
-                <div class="eye-badge os-badge">左眼 OS 面向客戶視角</div>
+                <div style="display:flex; align-items:center;">
+                    <div class="eye-badge os-badge">左眼 OS 面向客戶視角</div>
+                    <div class="power-display" id="power-display-os">S: -4.00 | C: 0.00 | A: 180°</div>
+                </div>
                 <div class="thickness-metrics">
                     <div class="metric-item">CT:<span id="metric-ct-os">1.2</span></div>
                     <div class="metric-item">鼻側:<span id="metric-nasal-os">--</span></div>
@@ -645,9 +677,12 @@
     <footer class="controls-container">
         <!-- 右眼控制面板 -->
         <div class="control-panel">
-            <div class="panel-title">右眼 OD 參數設定</div>
+            <div class="panel-title">
+                右眼 OD 參數設定
+                <button class="toggle-params-btn" id="btn-toggle-od" onclick="toggleParams('od')">收起度數/EP</button>
+            </div>
             
-            <div class="top-params-flex">
+            <div class="top-params-flex" id="params-flex-od">
                 <div class="params-left">
                     <div class="control-row">
                         <div class="control-label-row">
@@ -736,9 +771,12 @@
 
         <!-- 左眼控制面板 -->
         <div class="control-panel">
-            <div class="panel-title">左眼 OS 參數設定</div>
+            <div class="panel-title">
+                左眼 OS 參數設定
+                <button class="toggle-params-btn" id="btn-toggle-os" onclick="toggleParams('os')">收起度數/EP</button>
+            </div>
             
-            <div class="top-params-flex">
+            <div class="top-params-flex" id="params-flex-os">
                 <div class="params-left">
                     <div class="control-row">
                         <div class="control-label-row">
@@ -853,6 +891,19 @@
             syncAll();
         });
 
+        // 參數收合功能
+        function toggleParams(eye) {
+            const flex = document.getElementById(`params-flex-${eye}`);
+            const btn = document.getElementById(`btn-toggle-${eye}`);
+            if (flex.style.display === 'none') {
+                flex.style.display = 'flex';
+                btn.innerText = '收起度數/EP';
+            } else {
+                flex.style.display = 'none';
+                btn.innerText = '展開度數/EP';
+            }
+        }
+
         function setViewMode(mode) {
             state.viewMode = mode;
             
@@ -915,7 +966,6 @@
         }
 
         function validateAndSync() {
-            // 在輸入時移除無效字元，確保即使是tel鍵盤也能轉為數字
             state.frameA = parseFloat(document.getElementById('frameA').value) || 50;
             let oldB = state.frameB;
             state.frameB = parseFloat(document.getElementById('frameB').value) || 40;
@@ -935,7 +985,6 @@
             syncAll();
         }
         
-        // 實體尺校正左右微調按鈕
         function stepCalib(val) {
             let el = document.getElementById('calibScale');
             let cur = parseFloat(el.value);
@@ -1065,6 +1114,11 @@
             return recommend >= minBlank ? `Ø ${recommend} mm` : `> Ø 80 (特製)`;
         }
 
+        // 限定 clamp 函數，確保邊緣工藝不會畫出鏡片實體範圍
+        function clamp(val, min, max) {
+            return Math.max(min, Math.min(val, max));
+        }
+
         function syncAll() {
             ['od', 'os'].forEach(eye => {
                 state[eye].sph = parseFloat(document.getElementById(`sph-${eye}`).value);
@@ -1081,6 +1135,9 @@
                 document.getElementById(`val-ep-${eye}`).innerText = state[eye].ep.toFixed(1);
                 document.getElementById(`val-ratio-${eye}`).innerText = `${Math.round(state[eye].ratio*100)}%`;
                 document.getElementById(`metric-ct-${eye}`).innerText = state[eye].ct.toFixed(1);
+                
+                // 更新上方的 S/C/A 顯示
+                document.getElementById(`power-display-${eye}`).innerText = `S: ${formatDegree(state[eye].sph)} | C: ${formatDegree(state[eye].cyl)} | A: ${state[eye].axis}°`;
             });
 
             document.getElementById('frame-display-title').innerText = `(${state.frameA} □ ${state.frameDBL})`;
@@ -1120,6 +1177,7 @@
             const powerV = eyeState.sph + eyeState.cyl * Math.pow(Math.cos(rad), 2);
 
             const decH = ((state.frameA + state.frameDBL) / 2) - pd;
+            const decV = ep - (state.frameB / 2); 
 
             let xNasal, xTemporal;
             if (type === 'OD') {
@@ -1313,58 +1371,120 @@
             ctx.fillText(designText, cxH, h - 15);
         }
 
+        // 精確的 V溝 / 車溝 繪製邏輯 (包含 1.5mm 固定底寬與平邊延伸)
         function drawEdgeProfilePath(ctx, frontPt, backPt, direction, type, ratio, mmToPx, isReverse, isVertical) {
             if(isVertical) {
+                // 垂直切面：邊緣沿著 X 軸連接 (厚度為 X 軸差)
                 const edgeThicknessPx = backPt.x - frontPt.x;
                 const midX = frontPt.x + edgeThicknessPx * ratio;
                 const edgeWidthPx = 0.8 * mmToPx; 
 
                 if (type === 'V') {
                     let peakY = frontPt.y + direction * edgeWidthPx;
-                    ctx.lineTo(midX, peakY);
-                    ctx.lineTo(isReverse ? frontPt.x : backPt.x, isReverse ? frontPt.y : backPt.y);
+                    let vBasePx = 1.5 * mmToPx; // 真實 V 溝底寬約 1.5mm
+                    let vStart = midX - vBasePx / 2;
+                    let vEnd = midX + vBasePx / 2;
+                    
+                    // 確保 V 溝不會畫出鏡片範圍
+                    let minX = Math.min(frontPt.x, backPt.x);
+                    let maxX = Math.max(frontPt.x, backPt.x);
+                    vStart = clamp(vStart, minX, maxX);
+                    vEnd = clamp(vEnd, minX, maxX);
+
+                    if (isReverse) {
+                        ctx.lineTo(vEnd, frontPt.y);    // 平切到 V溝結束點
+                        ctx.lineTo(midX, peakY);        // 畫出尖端
+                        ctx.lineTo(vStart, frontPt.y);  // 畫回 V溝起始點
+                        ctx.lineTo(frontPt.x, frontPt.y); // 平切到最前緣
+                    } else {
+                        ctx.lineTo(vStart, frontPt.y);  // 平切到 V溝起始點
+                        ctx.lineTo(midX, peakY);        // 畫出尖端
+                        ctx.lineTo(vEnd, frontPt.y);    // 畫回 V溝結束點
+                        ctx.lineTo(backPt.x, backPt.y); // 平切到最後緣
+                    }
                 } else if (type === 'G') {
                     let grooveInY = frontPt.y - direction * (0.6 * mmToPx);
-                    let grooveWidthPx = 0.8 * mmToPx;
+                    let grooveWidthPx = 0.8 * mmToPx; // 車溝寬度維持 0.8mm
+                    
+                    let gStart = midX - grooveWidthPx / 2;
+                    let gEnd = midX + grooveWidthPx / 2;
+
                     if (isReverse) {
-                        ctx.lineTo(midX + grooveWidthPx / 2, frontPt.y);
-                        ctx.lineTo(midX + grooveWidthPx / 2, grooveInY);
-                        ctx.lineTo(midX - grooveWidthPx / 2, grooveInY);
-                        ctx.lineTo(midX - grooveWidthPx / 2, frontPt.y);
+                        ctx.lineTo(gEnd, frontPt.y);
+                        ctx.lineTo(gEnd, grooveInY);
+                        ctx.lineTo(gStart, grooveInY);
+                        ctx.lineTo(gStart, frontPt.y);
                         ctx.lineTo(frontPt.x, frontPt.y);
                     } else {
-                        ctx.lineTo(midX - grooveWidthPx / 2, frontPt.y);
-                        ctx.lineTo(midX - grooveWidthPx / 2, grooveInY);
-                        ctx.lineTo(midX + grooveWidthPx / 2, grooveInY);
-                        ctx.lineTo(midX + grooveWidthPx / 2, frontPt.y);
+                        ctx.lineTo(gStart, frontPt.y);
+                        ctx.lineTo(gStart, grooveInY);
+                        ctx.lineTo(gEnd, grooveInY);
+                        ctx.lineTo(gEnd, frontPt.y);
                         ctx.lineTo(backPt.x, backPt.y);
                     }
                 } else {
                     ctx.lineTo(isReverse ? frontPt.x : backPt.x, isReverse ? frontPt.y : backPt.y);
                 }
             } else {
+                // 水平切面：邊緣沿著 Y 軸連接 (厚度為 Y 軸差)
                 const edgeThicknessPx = backPt.y - frontPt.y;
                 const midY = frontPt.y + edgeThicknessPx * ratio;
                 const edgeWidthPx = 0.8 * mmToPx; 
 
                 if (type === 'V') {
                     let peakX = frontPt.x + direction * edgeWidthPx;
-                    ctx.lineTo(peakX, midY);
-                    ctx.lineTo(isReverse ? frontPt.x : backPt.x, isReverse ? frontPt.y : backPt.y);
+                    let vBasePx = 1.5 * mmToPx; // 真實 V 溝底寬約 1.5mm
+                    
+                    let y1, y2;
+                    if (frontPt.y < backPt.y) {
+                        y1 = midY - vBasePx / 2;
+                        y2 = midY + vBasePx / 2;
+                    } else {
+                        y1 = midY + vBasePx / 2;
+                        y2 = midY - vBasePx / 2;
+                    }
+
+                    // 確保不會超出鏡片範圍
+                    let minY = Math.min(frontPt.y, backPt.y);
+                    let maxY = Math.max(frontPt.y, backPt.y);
+                    y1 = clamp(y1, minY, maxY);
+                    y2 = clamp(y2, minY, maxY);
+
+                    if (isReverse) {
+                        ctx.lineTo(frontPt.x, y2);
+                        ctx.lineTo(peakX, midY);
+                        ctx.lineTo(frontPt.x, y1);
+                        ctx.lineTo(frontPt.x, frontPt.y);
+                    } else {
+                        ctx.lineTo(frontPt.x, y1);
+                        ctx.lineTo(peakX, midY);
+                        ctx.lineTo(frontPt.x, y2);
+                        ctx.lineTo(backPt.x, backPt.y);
+                    }
                 } else if (type === 'G') {
                     let grooveInX = frontPt.x - direction * (0.6 * mmToPx);
                     let grooveWidthPx = 0.8 * mmToPx;
+                    
+                    let y1, y2;
+                    if (frontPt.y < backPt.y) {
+                        y1 = midY - grooveWidthPx / 2;
+                        y2 = midY + grooveWidthPx / 2;
+                    } else {
+                        y1 = midY + grooveWidthPx / 2;
+                        y2 = midY - grooveWidthPx / 2;
+                    }
+
                     if (isReverse) {
-                        ctx.lineTo(frontPt.x, midY + grooveWidthPx / 2);
-                        ctx.lineTo(grooveInX, midY + grooveWidthPx / 2);
-                        ctx.lineTo(grooveInX, midY - grooveWidthPx / 2);
-                        ctx.lineTo(frontPt.x, midY - grooveWidthPx / 2);
+                        ctx.lineTo(frontPt.x, y2);
+                        ctx.lineTo(grooveInX, y2);
+                        ctx.lineTo(grooveInX, y1);
+                        ctx.lineTo(frontPt.x, y1);
                         ctx.lineTo(frontPt.x, frontPt.y);
                     } else {
-                        ctx.lineTo(frontPt.x, midY - grooveWidthPx / 2);
-                        ctx.lineTo(grooveInX, midY - grooveWidthPx / 2);
-                        ctx.lineTo(grooveInX, midY + grooveWidthPx / 2);
-                        ctx.lineTo(frontPt.x, midY + grooveWidthPx / 2);
+                        ctx.lineTo(frontPt.x, y1);
+                        ctx.lineTo(grooveInX, y1);
+                        ctx.lineTo(grooveInX, y2);
+                        ctx.lineTo(frontPt.x, y2);
                         ctx.lineTo(backPt.x, backPt.y);
                     }
                 } else {
