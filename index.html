@@ -2,7 +2,6 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <!-- Apple Web App 全螢幕與縮放設定 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -21,14 +20,11 @@
             background-color: #f3f6f4;
             color: #2c3531;
             overflow-x: hidden;
-            /* 針對 iPad 加入主畫面的頂部安全距離 */
             padding-top: env(safe-area-inset-top);
             padding-bottom: 40px;
         }
 
-        /* ==========================================
-           強制橫向鎖定遮罩 (Portrait Intercept)
-           ========================================== */
+        /* 強制橫向鎖定遮罩 */
         #orientation-warning {
             display: none;
             position: fixed;
@@ -65,7 +61,6 @@
             100% { transform: rotate(0deg); }
         }
 
-        /* 偵測直向時顯示警告，隱藏主內容 */
         @media screen and (orientation: portrait) {
             #orientation-warning { display: flex !important; }
             #app-content { display: none !important; }
@@ -111,7 +106,6 @@
             border: 1px solid rgba(255, 255, 255, 0.25);
         }
 
-        /* 全域鏡框與瞳距共用參數欄 */
         .shared-frame-bar {
             background-color: #ffffff;
             margin: 15px;
@@ -162,7 +156,6 @@
             color: #555;
         }
 
-        /* 確保輸入框在行動裝置/平板上顯示數字鍵盤 */
         .inline-input-group input {
             width: 58px;
             padding: 6px 6px;
@@ -196,7 +189,6 @@
             margin: 0 2px;
         }
 
-        /* 實體尺校正區 */
         .calibration-box {
             display: flex;
             flex-direction: column;
@@ -226,13 +218,25 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: background-color 0.2s;
+        }
+        
+        .calib-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #f0f0f0;
         }
 
-        .calib-btn:active {
-            background-color: #edf2ef;
+        .lock-btn {
+            background-color: #fff;
+            border-color: #a0b0a6;
+        }
+        .lock-btn.unlocked {
+            background-color: #eef5f1;
+            border-color: #5e7e6b;
+            color: #d9534f;
         }
 
-        /* 最佳原片建議區塊 */
         .blank-recommendation {
             background-color: #eef5f1;
             border-radius: 8px;
@@ -267,7 +271,6 @@
             border: 1px solid #d0ddd5;
         }
 
-        /* 中間：兩側鏡片動態圖顯示區 */
         .display-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -304,7 +307,6 @@
         .od-badge { background-color: #4a6b5d; }
         .os-badge { background-color: #617a72; }
 
-        /* S/C/A 顯示塊 */
         .power-display {
             font-size: 12px;
             font-weight: 700;
@@ -365,7 +367,6 @@
             height: 100%;
         }
 
-        /* 下方：OD/OS 各自設定參數區 */
         .controls-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -392,7 +393,6 @@
             padding-left: 8px;
         }
 
-        /* 收合按鈕 */
         .toggle-params-btn {
             margin-left: auto;
             font-size: 11px;
@@ -459,16 +459,9 @@
             flex: 1;
         }
 
-        .control-row {
-            margin-bottom: 16px;
-        }
-        
-        .params-left .control-row {
-            margin-bottom: 12px;
-        }
-        .params-left .control-row:last-child {
-            margin-bottom: 0;
-        }
+        .control-row { margin-bottom: 16px; }
+        .params-left .control-row { margin-bottom: 12px; }
+        .params-left .control-row:last-child { margin-bottom: 0; }
 
         .control-label-row {
             display: flex;
@@ -494,7 +487,6 @@
             text-align: center;
         }
 
-        /* 滑桿樣式 */
         input[type=range].horizontal-slider {
             -webkit-appearance: none;
             width: 100%;
@@ -502,6 +494,11 @@
             background: #e0e6e2;
             border-radius: 3px;
             outline: none;
+        }
+        
+        input[type=range].horizontal-slider:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         input[type=range].horizontal-slider::-webkit-slider-thumb {
@@ -521,7 +518,6 @@
             background: #4a6b5d;
         }
 
-        /* 三態/多態切換按鈕組 */
         .segmented-control {
             display: flex;
             background: #eee;
@@ -595,9 +591,7 @@
 </head>
 <body>
 
-    <!-- 強制旋轉提示畫面 -->
     <div id="orientation-warning">
-        <!-- 畫一個旋轉 iPad 的 SVG -->
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
             <line x1="12" y1="18" x2="12.01" y2="18"></line>
@@ -631,40 +625,41 @@
                 </div>
                 
                 <div class="inputs-row">
+                    <!-- 加入 inputmode="decimal" 與 onfocus="this.select()" -->
                     <div class="inline-input-group">
                         <label>A寬</label>
-                        <input type="tel" id="frameA" value="52" oninput="validateAndSync()">
+                        <input type="tel" inputmode="decimal" id="frameA" value="52" onfocus="this.select()" oninput="validateAndSync()">
                     </div>
                     <div class="inline-input-group">
                         <label>DBL</label>
-                        <input type="tel" id="frameDBL" value="18" oninput="validateAndSync()">
+                        <input type="tel" inputmode="decimal" id="frameDBL" value="18" onfocus="this.select()" oninput="validateAndSync()">
                     </div>
                     <div class="inline-input-group">
                         <label style="color:#2b6bb8;">B高</label>
-                        <input type="tel" id="frameB" value="40" oninput="validateAndSync()">
+                        <input type="tel" inputmode="decimal" id="frameB" value="40" onfocus="this.select()" oninput="validateAndSync()">
                     </div>
                     
                     <div class="inline-input-group" title="ED (有效直徑)為鏡框最大對角線，影響原片大小計算">
                         <label style="color:#e67e22;">ED</label>
-                        <input type="tel" id="frameED" value="40" oninput="validateAndSync(true)">
+                        <input type="tel" inputmode="decimal" id="frameED" value="40" onfocus="this.select()" oninput="validateAndSync()">
                     </div>
                     
                     <div class="pd-separator"></div>
                     
                     <div class="inline-input-group">
                         <label style="color:#d9534f;">總PD</label>
-                        <input type="tel" id="pdTotal" value="64.0" oninput="updatePDTotal()">
+                        <input type="tel" inputmode="decimal" id="pdTotal" value="64.0" onfocus="this.select()" oninput="updatePDTotal()">
                     </div>
                     
                     <div class="pd-separator"></div>
                     
                     <div class="inline-input-group">
                         <label style="color:#4a6b5d;">R.PD</label>
-                        <input type="tel" id="pdOD" value="32.0" oninput="updatePDSingle()">
+                        <input type="tel" inputmode="decimal" id="pdOD" value="32.0" onfocus="this.select()" oninput="updatePDSingle()">
                     </div>
                     <div class="inline-input-group">
                         <label style="color:#617a72;">L.PD</label>
-                        <input type="tel" id="pdOS" value="32.0" oninput="updatePDSingle()">
+                        <input type="tel" inputmode="decimal" id="pdOS" value="32.0" onfocus="this.select()" oninput="updatePDSingle()">
                     </div>
                 </div>
                 
@@ -682,11 +677,13 @@
 
             <div class="calibration-box">
                 <div style="font-size:13px; font-weight:700; color:#4a6b5d; margin-bottom:4px;">📏 iPad 實體比例校正</div>
-                <div style="font-size:12px; color:#555; margin-bottom:6px;">請將直尺貼齊螢幕，微調滑桿使下方 1cm 與直尺吻合：</div>
+                <div style="font-size:12px; color:#555; margin-bottom:6px;">請將直尺貼齊螢幕，解鎖後微調滑桿使下方 1cm 與直尺吻合：</div>
                 <div class="calibration-controls">
-                    <button class="calib-btn" onclick="stepCalib(-0.05)">-</button>
-                    <input type="range" class="horizontal-slider" id="calibScale" min="3" max="8" step="0.05" value="4.05" oninput="syncAll()" style="flex:1;">
-                    <button class="calib-btn" onclick="stepCalib(0.05)">+</button>
+                    <!-- 新增鎖定按鈕 -->
+                    <button class="calib-btn lock-btn" id="calibLockBtn" onclick="toggleCalibLock()">🔒</button>
+                    <button class="calib-btn" id="calibMinus" onclick="stepCalib(-0.05)" disabled>-</button>
+                    <input type="range" class="horizontal-slider" id="calibScale" min="3" max="8" step="0.05" value="4.05" oninput="syncAll()" disabled style="flex:1;">
+                    <button class="calib-btn" id="calibPlus" onclick="stepCalib(0.05)" disabled>+</button>
                     <span id="calib-val" style="font-weight:bold; font-size:14px; color:#2c3531; min-width:45px; text-align:right;">4.05x</span>
                 </div>
                 <canvas id="rulerCanvas" width="300" height="35" style="margin-top:8px;"></canvas>
@@ -702,7 +699,7 @@
                         <div class="power-display" id="power-display-od">S: -4.00 | C: 0.00 | A: 180°</div>
                     </div>
                     <div class="thickness-metrics">
-                        <div class="metric-item">CT:<span id="metric-ct-od">1.2</span></div>
+                        <div class="metric-item">CT:<span id="metric-ct-od">1.5</span></div>
                         <div class="metric-item">顳側:<span id="metric-temp-od">--</span></div>
                         <div class="metric-item">鼻側:<span id="metric-nasal-od">--</span></div>
                         <div class="metric-item vertical-metric">上緣:<span id="metric-top-od">--</span></div>
@@ -724,7 +721,7 @@
                         <div class="power-display" id="power-display-os">S: -4.00 | C: 0.00 | A: 180°</div>
                     </div>
                     <div class="thickness-metrics">
-                        <div class="metric-item">CT:<span id="metric-ct-os">1.2</span></div>
+                        <div class="metric-item">CT:<span id="metric-ct-os">1.5</span></div>
                         <div class="metric-item">鼻側:<span id="metric-nasal-os">--</span></div>
                         <div class="metric-item">顳側:<span id="metric-temp-os">--</span></div>
                         <div class="metric-item vertical-metric">上緣:<span id="metric-top-os">--</span></div>
@@ -754,7 +751,7 @@
                                 <label>球面度數 (SPH)</label>
                                 <div class="value-display" id="val-sph-od">-4.00</div>
                             </div>
-                            <input type="range" class="horizontal-slider" id="sph-od" min="-15.00" max="8.00" step="0.25" value="-4.00" oninput="syncAll()">
+                            <input type="range" class="horizontal-slider" id="sph-od" min="-15.00" max="8.00" step="0.25" value="-4.00" oninput="updatePower('od')">
                         </div>
 
                         <div class="control-row">
@@ -762,7 +759,7 @@
                                 <label>散光度數 (CYL)</label>
                                 <div class="value-display" id="val-cyl-od">0.00</div>
                             </div>
-                            <input type="range" class="horizontal-slider" id="cyl-od" min="-6.00" max="0.00" step="0.25" value="0.00" oninput="syncAll()">
+                            <input type="range" class="horizontal-slider" id="cyl-od" min="-6.00" max="0.00" step="0.25" value="0.00" oninput="updatePower('od')">
                         </div>
                         
                         <div class="control-row">
@@ -807,11 +804,11 @@
                 <div class="control-row">
                     <div class="control-label-row">
                         <label>中心厚度 (CT)</label>
-                        <div class="value-display" id="val-ct-od">1.2 mm</div>
+                        <div class="value-display" id="val-ct-od">1.5 mm</div>
                     </div>
                     <div class="ct-stepper-container">
                         <button class="stepper-btn" onclick="stepCT('od', -0.1)">-</button>
-                        <input type="range" class="horizontal-slider" id="ct-od" min="0.8" max="5.0" step="0.1" value="1.2" oninput="syncAll()">
+                        <input type="range" class="horizontal-slider" id="ct-od" min="0.8" max="15.0" step="0.1" value="1.5" oninput="syncAll()">
                         <button class="stepper-btn" onclick="stepCT('od', 0.1)">+</button>
                     </div>
                 </div>
@@ -848,7 +845,7 @@
                                 <label>球面度數 (SPH)</label>
                                 <div class="value-display" id="val-sph-os">-4.00</div>
                             </div>
-                            <input type="range" class="horizontal-slider" id="sph-os" min="-15.00" max="8.00" step="0.25" value="-4.00" oninput="syncAll()">
+                            <input type="range" class="horizontal-slider" id="sph-os" min="-15.00" max="8.00" step="0.25" value="-4.00" oninput="updatePower('os')">
                         </div>
 
                         <div class="control-row">
@@ -856,7 +853,7 @@
                                 <label>散光度數 (CYL)</label>
                                 <div class="value-display" id="val-cyl-os">0.00</div>
                             </div>
-                            <input type="range" class="horizontal-slider" id="cyl-os" min="-6.00" max="0.00" step="0.25" value="0.00" oninput="syncAll()">
+                            <input type="range" class="horizontal-slider" id="cyl-os" min="-6.00" max="0.00" step="0.25" value="0.00" oninput="updatePower('os')">
                         </div>
                         
                         <div class="control-row">
@@ -901,11 +898,11 @@
                 <div class="control-row">
                     <div class="control-label-row">
                         <label>中心厚度 (CT)</label>
-                        <div class="value-display" id="val-ct-os">1.2 mm</div>
+                        <div class="value-display" id="val-ct-os">1.5 mm</div>
                     </div>
                     <div class="ct-stepper-container">
                         <button class="stepper-btn" onclick="stepCT('os', -0.1)">-</button>
-                        <input type="range" class="horizontal-slider" id="ct-os" min="0.8" max="5.0" step="0.1" value="1.2" oninput="syncAll()">
+                        <input type="range" class="horizontal-slider" id="ct-os" min="0.8" max="15.0" step="0.1" value="1.5" oninput="syncAll()">
                         <button class="stepper-btn" onclick="stepCT('os', 0.1)">+</button>
                     </div>
                 </div>
@@ -938,17 +935,21 @@
             frameED: 40,
             frameDBL: 18,
             pdTotal: 64.0,
-            od: { sph: -4.00, cyl: 0.00, axis: 180, index: 1.50, ct: 1.2, ep: 24, edgeType: 'V', ratio: 0.33, design: 'SPH' },
-            os: { sph: -4.00, cyl: 0.00, axis: 180, index: 1.50, ct: 1.2, ep: 24, edgeType: 'V', ratio: 0.33, design: 'SPH' },
+            od: { sph: -4.00, cyl: 0.00, axis: 180, index: 1.50, ct: 1.5, ep: 24, edgeType: 'V', ratio: 0.33, design: 'SPH' },
+            os: { sph: -4.00, cyl: 0.00, axis: 180, index: 1.50, ct: 1.5, ep: 24, edgeType: 'V', ratio: 0.33, design: 'SPH' },
             pdOD: 32.0,
             pdOS: 32.0
         };
         
         const BASE_SCALE_MULTIPLIER = 5.0 / 3.9;
+        let isCalibLocked = true; // 預設校正尺鎖定
 
         window.addEventListener('load', () => {
             setupCanvasResizing();
             initEP(); 
+            // 初始執行一次業界標準 CT 推算
+            updatePower('od', false);
+            updatePower('os', false);
             setTimeout(syncAll, 50);
         });
         
@@ -956,6 +957,85 @@
             setupCanvasResizing();
             syncAll();
         });
+
+        // 鎖定/解鎖比例尺
+        function toggleCalibLock() {
+            isCalibLocked = !isCalibLocked;
+            const btn = document.getElementById('calibLockBtn');
+            const slider = document.getElementById('calibScale');
+            const btnMinus = document.getElementById('calibMinus');
+            const btnPlus = document.getElementById('calibPlus');
+            
+            if (isCalibLocked) {
+                btn.innerText = '🔒';
+                btn.classList.remove('unlocked');
+                slider.disabled = true;
+                btnMinus.disabled = true;
+                btnPlus.disabled = true;
+            } else {
+                btn.innerText = '🔓';
+                btn.classList.add('unlocked');
+                slider.disabled = false;
+                btnMinus.disabled = false;
+                btnPlus.disabled = false;
+            }
+        }
+
+        // 當度數改變時，自動推算業界標準 CT
+        function updatePower(eye, doSync = true) {
+            state[eye].sph = parseFloat(document.getElementById(`sph-${eye}`).value);
+            state[eye].cyl = parseFloat(document.getElementById(`cyl-${eye}`).value);
+            
+            // 計算業界標準 CT
+            const newCT = getIndustryStandardCT(eye);
+            state[eye].ct = newCT;
+            document.getElementById(`ct-${eye}`).value = newCT;
+            
+            if(doSync) syncAll();
+        }
+
+        // 業界標準 CT 智慧聯動引擎
+        function getIndustryStandardCT(eye) {
+            const eyeState = state[eye];
+            // 簡單取等效球面度推估
+            const power = eyeState.sph + eyeState.cyl / 2;
+            const n = eyeState.index;
+            const design = eyeState.design;
+            
+            if (power <= 0) {
+                // 近視：依照材質物理特性與業界安全最低厚度
+                let baseCT = 1.5;
+                if (n >= 1.90) baseCT = 0.8;
+                else if (n >= 1.80) baseCT = 0.9;
+                else if (n >= 1.74) baseCT = 0.9;
+                else if (n >= 1.67) baseCT = 1.0;
+                else if (n >= 1.60) baseCT = 1.1;
+                else if (n >= 1.56) baseCT = 1.2;
+                
+                // 雙面非球面加工通常可再薄 0.1mm (保留下限 0.8)
+                if (design === 'DAS' && baseCT >= 1.0) baseCT -= 0.1;
+                return Math.max(0.8, baseCT);
+            } else {
+                // 遠視：利用 Sagitta (矢高) 公式動態精算
+                // 使用真實 ED 作為毛胚直徑參考 (至少抓 60)
+                let diameter = Math.max(60, state.frameED + 5); 
+                let y = diameter / 2;
+                // Sagitta approx = (Power * y^2) / (2000 * (n - 1))
+                let sag = (power * y * y) / (2000 * (n - 1));
+                
+                // 非球面平坦化修正
+                if (design === 'ASP') sag *= 0.85;
+                if (design === 'DAS') sag *= 0.75;
+                
+                // 加上邊緣安全厚度 (玻璃0.8，樹脂1.0)
+                let edgeThickness = (n >= 1.80) ? 0.8 : 1.0;
+                let estimatedCT = sag + edgeThickness;
+                
+                // 四捨五入至小數第一位，且限制合理範圍
+                estimatedCT = Math.round(estimatedCT * 10) / 10;
+                return Math.max(1.0, Math.min(estimatedCT, 15.0));
+            }
+        }
 
         function toggleParams(eye) {
             const flex = document.getElementById(`params-flex-${eye}`);
@@ -1047,10 +1127,15 @@
             state.pdOD = parseFloat(document.getElementById('pdOD').value) || 32;
             state.pdOS = parseFloat(document.getElementById('pdOS').value) || 32;
             
+            // 當 ED 等鏡框參數改變時，若為遠視，建議重算 CT
+            if (state.od.sph + state.od.cyl/2 > 0) updatePower('od', false);
+            if (state.os.sph + state.os.cyl/2 > 0) updatePower('os', false);
+            
             syncAll();
         }
         
         function stepCalib(val) {
+            if(isCalibLocked) return;
             let el = document.getElementById('calibScale');
             let cur = parseFloat(el.value);
             let next = (cur + val).toFixed(2);
@@ -1069,17 +1154,8 @@
                 if(idxMap[i] === value) buttons[i].classList.add('active');
                 else buttons[i].classList.remove('active');
             }
-            
-            let power = state[eye].sph + state[eye].cyl;
-            if (power < 0) {
-                if(value >= 1.80) state[eye].ct = 0.9;
-                else if (value >= 1.67) state[eye].ct = 1.1;
-                else state[eye].ct = 1.2;
-            } else {
-                state[eye].ct = 2.5; 
-            }
-            document.getElementById(`ct-${eye}`).value = state[eye].ct;
-            syncAll();
+            // 換折射率時重算標準CT
+            updatePower(eye, true);
         }
         
         function setDesignType(eye, type) {
@@ -1089,14 +1165,15 @@
             buttons[0].classList.toggle('active', type === 'SPH');
             buttons[1].classList.toggle('active', type === 'ASP');
             buttons[2].classList.toggle('active', type === 'DAS');
-            syncAll();
+            // 換設計時重算標準CT
+            updatePower(eye, true);
         }
 
         function stepCT(eye, val) {
             let el = document.getElementById(`ct-${eye}`);
             let cur = parseFloat(el.value);
             let next = (cur + val).toFixed(1);
-            if(next >= 0.8 && next <= 5.0) {
+            if(next >= 0.8 && next <= 15.0) {
                 el.value = next;
                 syncAll();
             }
@@ -1433,6 +1510,7 @@
             ctx.fillText(designText, cxH, h - 15);
         }
 
+        // 精確邊緣工藝繪製 (V溝底寬 1.5mm)
         function drawEdgeProfilePath(ctx, frontPt, backPt, direction, type, ratio, mmToPx, isReverse, isVertical) {
             if(isVertical) {
                 const edgeThicknessPx = backPt.x - frontPt.x;
