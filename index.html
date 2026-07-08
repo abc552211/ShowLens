@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="大學南崁鏡片規劃">
+    <meta name="apple-mobile-web-app-title" content="南崁鏡片規劃">
     <title>大學南崁鏡片規劃軟體 - 雙視角專業版</title>
     <style>
         * {
@@ -361,10 +361,19 @@
             width: 100%;
         }
 
-        canvas {
+        /* 修正 Canvas 顯示邏輯：僅限眼部畫布使用 100% 高寬 */
+        .canvas-wrapper canvas {
             display: block;
             width: 100%;
             height: 100%;
+        }
+        
+        /* 比例尺畫布固定高度，確保不被外部拉伸 */
+        #rulerCanvas {
+            display: block;
+            width: 100%;
+            height: 35px;
+            margin-top: 8px;
         }
 
         .controls-container {
@@ -625,7 +634,6 @@
                 </div>
                 
                 <div class="inputs-row">
-                    <!-- 加入 inputmode="decimal" 與 onfocus="this.select()" -->
                     <div class="inline-input-group">
                         <label>A寬</label>
                         <input type="tel" inputmode="decimal" id="frameA" value="52" onfocus="this.select()" oninput="validateAndSync()">
@@ -679,14 +687,13 @@
                 <div style="font-size:13px; font-weight:700; color:#4a6b5d; margin-bottom:4px;">📏 iPad 實體比例校正</div>
                 <div style="font-size:12px; color:#555; margin-bottom:6px;">請將直尺貼齊螢幕，解鎖後微調滑桿使下方 1cm 與直尺吻合：</div>
                 <div class="calibration-controls">
-                    <!-- 新增鎖定按鈕 -->
                     <button class="calib-btn lock-btn" id="calibLockBtn" onclick="toggleCalibLock()">🔒</button>
                     <button class="calib-btn" id="calibMinus" onclick="stepCalib(-0.05)" disabled>-</button>
                     <input type="range" class="horizontal-slider" id="calibScale" min="3" max="8" step="0.05" value="4.05" oninput="syncAll()" disabled style="flex:1;">
                     <button class="calib-btn" id="calibPlus" onclick="stepCalib(0.05)" disabled>+</button>
                     <span id="calib-val" style="font-weight:bold; font-size:14px; color:#2c3531; min-width:45px; text-align:right;">4.05x</span>
                 </div>
-                <canvas id="rulerCanvas" width="300" height="35" style="margin-top:8px;"></canvas>
+                <canvas id="rulerCanvas" style="margin-top:8px;"></canvas>
             </div>
         </section>
 
@@ -942,12 +949,11 @@
         };
         
         const BASE_SCALE_MULTIPLIER = 5.0 / 3.9;
-        let isCalibLocked = true; // 預設校正尺鎖定
+        let isCalibLocked = true; 
 
         window.addEventListener('load', () => {
             setupCanvasResizing();
             initEP(); 
-            // 初始執行一次業界標準 CT 推算
             updatePower('od', false);
             updatePower('os', false);
             setTimeout(syncAll, 50);
@@ -958,7 +964,6 @@
             syncAll();
         });
 
-        // 鎖定/解鎖比例尺
         function toggleCalibLock() {
             isCalibLocked = !isCalibLocked;
             const btn = document.getElementById('calibLockBtn');
@@ -981,12 +986,10 @@
             }
         }
 
-        // 當度數改變時，自動推算業界標準 CT
         function updatePower(eye, doSync = true) {
             state[eye].sph = parseFloat(document.getElementById(`sph-${eye}`).value);
             state[eye].cyl = parseFloat(document.getElementById(`cyl-${eye}`).value);
             
-            // 計算業界標準 CT
             const newCT = getIndustryStandardCT(eye);
             state[eye].ct = newCT;
             document.getElementById(`ct-${eye}`).value = newCT;
@@ -994,16 +997,13 @@
             if(doSync) syncAll();
         }
 
-        // 業界標準 CT 智慧聯動引擎
         function getIndustryStandardCT(eye) {
             const eyeState = state[eye];
-            // 簡單取等效球面度推估
             const power = eyeState.sph + eyeState.cyl / 2;
             const n = eyeState.index;
             const design = eyeState.design;
             
             if (power <= 0) {
-                // 近視：依照材質物理特性與業界安全最低厚度
                 let baseCT = 1.5;
                 if (n >= 1.90) baseCT = 0.8;
                 else if (n >= 1.80) baseCT = 0.9;
@@ -1012,26 +1012,19 @@
                 else if (n >= 1.60) baseCT = 1.1;
                 else if (n >= 1.56) baseCT = 1.2;
                 
-                // 雙面非球面加工通常可再薄 0.1mm (保留下限 0.8)
                 if (design === 'DAS' && baseCT >= 1.0) baseCT -= 0.1;
                 return Math.max(0.8, baseCT);
             } else {
-                // 遠視：利用 Sagitta (矢高) 公式動態精算
-                // 使用真實 ED 作為毛胚直徑參考 (至少抓 60)
                 let diameter = Math.max(60, state.frameED + 5); 
                 let y = diameter / 2;
-                // Sagitta approx = (Power * y^2) / (2000 * (n - 1))
                 let sag = (power * y * y) / (2000 * (n - 1));
                 
-                // 非球面平坦化修正
                 if (design === 'ASP') sag *= 0.85;
                 if (design === 'DAS') sag *= 0.75;
                 
-                // 加上邊緣安全厚度 (玻璃0.8，樹脂1.0)
                 let edgeThickness = (n >= 1.80) ? 0.8 : 1.0;
                 let estimatedCT = sag + edgeThickness;
                 
-                // 四捨五入至小數第一位，且限制合理範圍
                 estimatedCT = Math.round(estimatedCT * 10) / 10;
                 return Math.max(1.0, Math.min(estimatedCT, 15.0));
             }
@@ -1085,6 +1078,17 @@
                     ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
                 }
             });
+
+            // 修正比例尺畫布的解析度同步，確保完全不被CSS拉伸而變形
+            const rCanvas = document.getElementById('rulerCanvas');
+            const rRect = rCanvas.getBoundingClientRect();
+            if (rRect.width > 0) {
+                rCanvas.width = rRect.width * window.devicePixelRatio;
+                rCanvas.height = 35 * window.devicePixelRatio;
+                const rctx = rCanvas.getContext('2d');
+                rctx.setTransform(1, 0, 0, 1, 0, 0);
+                rctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+            }
         }
         
         function initEP() {
@@ -1127,7 +1131,6 @@
             state.pdOD = parseFloat(document.getElementById('pdOD').value) || 32;
             state.pdOS = parseFloat(document.getElementById('pdOS').value) || 32;
             
-            // 當 ED 等鏡框參數改變時，若為遠視，建議重算 CT
             if (state.od.sph + state.od.cyl/2 > 0) updatePower('od', false);
             if (state.os.sph + state.os.cyl/2 > 0) updatePower('os', false);
             
@@ -1154,7 +1157,6 @@
                 if(idxMap[i] === value) buttons[i].classList.add('active');
                 else buttons[i].classList.remove('active');
             }
-            // 換折射率時重算標準CT
             updatePower(eye, true);
         }
         
@@ -1165,7 +1167,6 @@
             buttons[0].classList.toggle('active', type === 'SPH');
             buttons[1].classList.toggle('active', type === 'ASP');
             buttons[2].classList.toggle('active', type === 'DAS');
-            // 換設計時重算標準CT
             updatePower(eye, true);
         }
 
@@ -1198,12 +1199,16 @@
             return val > 0 ? `+${val.toFixed(2)}` : val.toFixed(2);
         }
 
-        function drawRuler(mmToPxBase) {
+        function drawRuler(userScale) {
             const rCanvas = document.getElementById('rulerCanvas');
             const rctx = rCanvas.getContext('2d');
-            rctx.clearRect(0, 0, rCanvas.width, rCanvas.height);
             
-            const mmToPx = mmToPxBase * BASE_SCALE_MULTIPLIER;
+            // 使用正確的 CSS 尺寸清除畫布
+            const cssWidth = rCanvas.width / window.devicePixelRatio;
+            const cssHeight = rCanvas.height / window.devicePixelRatio;
+            rctx.clearRect(0, 0, cssWidth, cssHeight);
+            
+            const mmToPx = userScale * BASE_SCALE_MULTIPLIER;
             
             rctx.fillStyle = '#2c3531';
             rctx.font = '11px Arial';
@@ -1218,7 +1223,7 @@
             rctx.lineWidth = 1;
             for(let mm=0; mm<=100; mm++) {
                 let x = 10 + mm * mmToPx;
-                if (x > rCanvas.width - 15) break;
+                if (x > cssWidth - 15) break; 
                 
                 rctx.beginPath();
                 rctx.moveTo(x, 25);
@@ -1288,8 +1293,9 @@
             let userScale = parseFloat(document.getElementById('calibScale').value);
             document.getElementById('calib-val').innerText = userScale.toFixed(2) + 'x';
             
-            let actualRenderScale = userScale * BASE_SCALE_MULTIPLIER;
             drawRuler(userScale); 
+            
+            let actualRenderScale = userScale * BASE_SCALE_MULTIPLIER;
 
             renderEye('canvasOD', 'OD', actualRenderScale);
             renderEye('canvasOS', 'OS', actualRenderScale);
@@ -1510,7 +1516,6 @@
             ctx.fillText(designText, cxH, h - 15);
         }
 
-        // 精確邊緣工藝繪製 (V溝底寬 1.5mm)
         function drawEdgeProfilePath(ctx, frontPt, backPt, direction, type, ratio, mmToPx, isReverse, isVertical) {
             if(isVertical) {
                 const edgeThicknessPx = backPt.x - frontPt.x;
