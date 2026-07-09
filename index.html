@@ -7,7 +7,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="南崁鏡片規劃">
     <link rel="apple-touch-icon" href="https://i.postimg.cc/TPZNwhL8/wei-ming-ming-she-ji-1-yi-bian-ji.png">
-    <link rel="icon" type="image/png" href="https://i.postimg.cc/TPZNwhL8/wei-ming-ming-she-ji-1-yi-bian-ji.png">
     <title>大學南崁鏡片規劃軟體 - 雙視角專業版</title>
     <style>
         * {
@@ -288,6 +287,18 @@
             display: flex;
             flex-direction: column;
         }
+
+        .edge-warning {
+            background-color: #fff4e5;
+            color: #8a6d3b;
+            border: 1px solid #ffe8c4;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .edge-warning b { color: #d9534f; }
 
         .eye-card-header {
             display: flex;
@@ -700,8 +711,8 @@
         </section>
 
         <main class="display-container">
-            <!-- 右眼顯示卡 OD -->
             <div class="eye-card">
+                <div id="warning-od" class="edge-warning" style="display:none;"></div>
                 <div class="eye-card-header">
                     <div style="display:flex; align-items:center;">
                         <div class="eye-badge od-badge">右眼 OD 面向客戶視角</div>
@@ -722,8 +733,8 @@
                 </div>
             </div>
 
-            <!-- 左眼顯示卡 OS -->
             <div class="eye-card">
+                <div id="warning-os" class="edge-warning" style="display:none;"></div>
                 <div class="eye-card-header">
                     <div style="display:flex; align-items:center;">
                         <div class="eye-badge os-badge">左眼 OS 面向客戶視角</div>
@@ -746,7 +757,6 @@
         </main>
 
         <footer class="controls-container">
-            <!-- 右眼控制面板 -->
             <div class="control-panel">
                 <div class="panel-title">
                     右眼 OD 參數設定
@@ -840,7 +850,6 @@
                 </div>
             </div>
 
-            <!-- 左眼控制面板 -->
             <div class="control-panel">
                 <div class="panel-title">
                     左眼 OS 參數設定
@@ -1372,6 +1381,41 @@
             const cxV = w * 0.88;
             const cyV = h / 2;
 
+            // 邊緣厚度通算 (供防呆警示使用)
+            const tNasalCalc = Math.abs((eyeState.ct + getSag(xNasal, radiiH.r2) - getSag(xNasal, radiiH.r1)));
+            const tTemporalCalc = Math.abs((eyeState.ct + getSag(xTemporal, radiiH.r2) - getSag(xTemporal, radiiH.r1)));
+            const tTopCalc = Math.abs((eyeState.ct + getSag(yTopReal, radiiV.r2) - getSag(yTopReal, radiiV.r1)));
+            const tBotCalc = Math.abs((eyeState.ct + getSag(yBotReal, radiiV.r2) - getSag(yBotReal, radiiV.r1)));
+            
+            // 尋找全周最薄邊緣
+            let minEdge = Math.min(tNasalCalc, tTemporalCalc, tTopCalc, tBotCalc);
+            
+            // 處理 UI 防呆提示
+            let eyeKey = type.toLowerCase();
+            let warningDiv = document.getElementById(`warning-${eyeKey}`);
+            let warnings = [];
+
+            if (eyeState.edgeType === 'G' || eyeState.edgeType === 'F') {
+                // 1. 曲折率材質警示 (低於 1.6 易碎)
+                if (eyeState.index < 1.60) {
+                    warnings.push("⚠️ <b>材質過脆：</b>車溝/打孔需高韌性材質，強烈建議選擇 <b>1.60(含)以上</b> (如MR-8)，1.50/1.56 加工易破裂。");
+                }
+                // 2. 邊厚安全警示 (業界車溝/打孔安全厚度基準 1.8mm)
+                let safeEdge = 1.8; 
+                if (minEdge < safeEdge) {
+                    let requiredCT = eyeState.ct + (safeEdge - minEdge);
+                    requiredCT = Math.ceil(requiredCT * 10) / 10; // 向上取整至小數點第一位
+                    warnings.push(`⚠️ <b>邊緣過薄 (${minEdge.toFixed(1)}mm)：</b>不適合車溝/打孔。建議將中心厚度(CT)加厚至 <b>${requiredCT.toFixed(1)}mm</b> 以上。`);
+                }
+            }
+
+            if (warnings.length > 0) {
+                warningDiv.innerHTML = warnings.join('<br>');
+                warningDiv.style.display = 'block';
+            } else {
+                warningDiv.style.display = 'none';
+            }
+
             // ==========================================
             // 1. 繪製水平橫切面 (Top View)
             // ==========================================
@@ -1392,11 +1436,8 @@
                 pointsBackH.push({x: cxH + x * mmToPx, y: yb});
             }
 
-            const tNasal = Math.abs((eyeState.ct + getSag(xNasal, radiiH.r2) - getSag(xNasal, radiiH.r1)));
-            const tTemporal = Math.abs((eyeState.ct + getSag(xTemporal, radiiH.r2) - getSag(xTemporal, radiiH.r1)));
-
-            document.getElementById(`metric-nasal-${type.toLowerCase()}`).innerText = tNasal.toFixed(1);
-            document.getElementById(`metric-temp-${type.toLowerCase()}`).innerText = tTemporal.toFixed(1);
+            document.getElementById(`metric-nasal-${type.toLowerCase()}`).innerText = tNasalCalc.toFixed(1);
+            document.getElementById(`metric-temp-${type.toLowerCase()}`).innerText = tTemporalCalc.toFixed(1);
 
             ctx.strokeStyle = '#1d2722';
             ctx.lineWidth = 0.5;
@@ -1446,8 +1487,8 @@
                 ctx.fillStyle = '#ffffff'; ctx.font = '10px sans-serif'; ctx.textAlign = 'center'; ctx.fillText("水平切面 (Top)", cxH, cyH - 22);
             }
 
-            let tLeftStr = `${(type === 'OD' ? tTemporal : tNasal).toFixed(1)}`;
-            let tRightStr = `${(type === 'OD' ? tNasal : tTemporal).toFixed(1)}`;
+            let tLeftStr = `${(type === 'OD' ? tTemporalCalc : tNasalCalc).toFixed(1)}`;
+            let tRightStr = `${(type === 'OD' ? tNasalCalc : tTemporalCalc).toFixed(1)}`;
             ctx.fillStyle = '#a0b0a6'; ctx.font = 'bold 11px sans-serif';
             ctx.textAlign = 'right'; ctx.fillText(type === 'OD' ? `顳側 ${tLeftStr}` : `鼻側 ${tLeftStr}`, Math.max(leftEdgeFrontH.x - 30, 10), cyH + 5);
             ctx.textAlign = 'left'; ctx.fillText(type === 'OD' ? `鼻側 ${tRightStr}` : `顳側 ${tRightStr}`, Math.min(rightEdgeFrontH.x + 30, maxLineW), cyH + 5);
@@ -1469,12 +1510,9 @@
                     pointsFrontV.push({x: xf, y: yScreen});
                     pointsBackV.push({x: xb, y: yScreen});
                 }
-
-                const tTop = Math.abs((eyeState.ct + getSag(yTopReal, radiiV.r2) - getSag(yTopReal, radiiV.r1)));
-                const tBot = Math.abs((eyeState.ct + getSag(yBotReal, radiiV.r2) - getSag(yBotReal, radiiV.r1)));
                 
-                document.getElementById(`metric-top-${type.toLowerCase()}`).innerText = tTop.toFixed(1);
-                document.getElementById(`metric-bot-${type.toLowerCase()}`).innerText = tBot.toFixed(1);
+                document.getElementById(`metric-top-${type.toLowerCase()}`).innerText = tTopCalc.toFixed(1);
+                document.getElementById(`metric-bot-${type.toLowerCase()}`).innerText = tBotCalc.toFixed(1);
 
                 ctx.beginPath();
                 ctx.moveTo(pointsFrontV[0].x, pointsFrontV[0].y); 
@@ -1509,8 +1547,8 @@
                 ctx.fillStyle = '#e67e22'; ctx.font = '10px sans-serif'; ctx.fillText(`EP ${ep}mm`, cxV, cyV - 8);
 
                 ctx.fillStyle = '#a0b0a6'; ctx.font = 'bold 11px sans-serif';
-                ctx.textAlign = 'center'; ctx.fillText(`上緣 ${tTop.toFixed(1)}`, cxV, topFrontV.y - 8);
-                ctx.fillText(`下緣 ${tBot.toFixed(1)}`, cxV, botFrontV.y + 16);
+                ctx.textAlign = 'center'; ctx.fillText(`上緣 ${tTopCalc.toFixed(1)}`, cxV, topFrontV.y - 8);
+                ctx.fillText(`下緣 ${tBotCalc.toFixed(1)}`, cxV, botFrontV.y + 16);
             }
 
             ctx.font = 'bold 16px sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.textAlign = 'center';
