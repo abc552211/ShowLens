@@ -299,6 +299,24 @@
             line-height: 1.5;
         }
         .edge-warning b { color: #d9534f; }
+        
+        /* 一鍵校正按鈕樣式 */
+        .correct-btn {
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 10px;
+            vertical-align: middle;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(217, 83, 79, 0.3);
+        }
+        .correct-btn:hover { background-color: #c9302c; }
+        .correct-btn:active { transform: scale(0.95); }
 
         .eye-card-header {
             display: flex;
@@ -1190,6 +1208,12 @@
                 syncAll();
             }
         }
+        
+        function applySafeCT(eye, safeCT) {
+            document.getElementById(`ct-${eye}`).value = safeCT;
+            state[eye].ct = safeCT;
+            syncAll();
+        }
 
         function setEdgeType(eye, type) {
             state[eye].edgeType = type;
@@ -1405,7 +1429,7 @@
                 if (minEdge < safeEdge) {
                     let requiredCT = eyeState.ct + (safeEdge - minEdge);
                     requiredCT = Math.ceil(requiredCT * 10) / 10; // 向上取整至小數點第一位
-                    warnings.push(`⚠️ <b>邊緣過薄 (${minEdge.toFixed(1)}mm)：</b>不適合車溝/打孔。建議將中心厚度(CT)加厚至 <b>${requiredCT.toFixed(1)}mm</b> 以上。`);
+                    warnings.push(`⚠️ <b>邊緣過薄 (${minEdge.toFixed(1)}mm)：</b>不適合車溝/打孔。建議將中心厚度加厚至 <b>${requiredCT.toFixed(1)}mm</b> 以上。<button class="correct-btn" onclick="applySafeCT('${eyeKey}', ${requiredCT})">一鍵校正</button>`);
                 }
             }
 
