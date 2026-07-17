@@ -68,7 +68,6 @@
             body { padding: 0; overflow: hidden; background: #2c3531; }
         }
 
-        /* 頂層頂部欄 */
         .top-header {
             background: linear-gradient(135deg, #5e7e6b, #7a9a88);
             color: #ffffff;
@@ -140,7 +139,7 @@
 
         .inputs-row {
             display: flex;
-            gap: 12px;
+            gap: 8px; /* 緊湊排列防換行 */
             align-items: center;
             flex-wrap: wrap;
         }
@@ -158,8 +157,8 @@
         }
 
         .inline-input-group input {
-            width: 58px;
-            padding: 6px 6px;
+            width: 52px;
+            padding: 6px 4px;
             border: 1px solid #ced6d2;
             border-radius: 6px;
             font-size: 14px;
@@ -228,15 +227,8 @@
             background-color: #f0f0f0;
         }
 
-        .lock-btn {
-            background-color: #fff;
-            border-color: #a0b0a6;
-        }
-        .lock-btn.unlocked {
-            background-color: #eef5f1;
-            border-color: #5e7e6b;
-            color: #d9534f;
-        }
+        .lock-btn { background-color: #fff; border-color: #a0b0a6; }
+        .lock-btn.unlocked { background-color: #eef5f1; border-color: #5e7e6b; color: #d9534f; }
 
         .blank-recommendation {
             background-color: #eef5f1;
@@ -256,20 +248,10 @@
             gap: 4px;
         }
 
-        .blank-label {
-            font-weight: 600;
-            color: #5e7e6b;
-            font-size: 12px;
-        }
-
+        .blank-label { font-weight: 600; color: #5e7e6b; font-size: 12px; }
         .blank-value {
-            font-weight: 800;
-            color: #2c3531;
-            font-size: 16px;
-            background: #fff;
-            padding: 2px 10px;
-            border-radius: 12px;
-            border: 1px solid #d0ddd5;
+            font-weight: 800; color: #2c3531; font-size: 16px;
+            background: #fff; padding: 2px 10px; border-radius: 12px; border: 1px solid #d0ddd5;
         }
 
         .display-container {
@@ -282,100 +264,19 @@
         .eye-card {
             background-color: #ffffff;
             border-radius: 14px;
-            padding: 16px;
+            padding: 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.04);
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
-        .edge-warning {
-            background-color: #fff4e5;
-            color: #8a6d3b;
-            border: 1px solid #ffe8c4;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 13px;
-            margin-bottom: 12px;
-            line-height: 1.5;
-        }
-        .edge-warning b { color: #d9534f; }
-        
-        /* 一鍵校正按鈕樣式 */
-        .correct-btn {
-            background-color: #d9534f;
-            color: white;
-            border: none;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-left: 10px;
-            vertical-align: middle;
-            transition: all 0.2s;
-            box-shadow: 0 2px 4px rgba(217, 83, 79, 0.3);
-        }
-        .correct-btn:hover { background-color: #c9302c; }
-        .correct-btn:active { transform: scale(0.95); }
-
-        .eye-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #edf2ef;
-        }
-
-        .eye-badge {
-            font-size: 15px;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 6px;
-            color: #ffffff;
-        }
-
-        .od-badge { background-color: #4a6b5d; }
-        .os-badge { background-color: #617a72; }
-
-        .power-display {
-            font-size: 12px;
-            font-weight: 700;
-            color: #4a6b5d;
-            background: #eef5f1;
-            padding: 4px 10px;
-            border-radius: 6px;
-            border: 1px solid #c8e0d1;
-            margin-left: 10px;
-            transition: all 0.2s;
-        }
-
-        .thickness-metrics {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            font-size: 11px;
-            max-width: 250px;
-            justify-content: flex-end;
-        }
-
-        .metric-item {
-            background: #f7faf8;
-            padding: 3px 6px;
-            border-radius: 4px;
-            border: 1px solid #e2eae5;
-        }
-
-        .metric-item span {
-            font-weight: 800;
-            color: #2e3b34;
-        }
-        
         .eye-body-layout {
             display: flex;
+            flex-direction: column;
             gap: 0;
             align-items: stretch;
-            height: 340px; 
+            height: 380px; 
             width: 100%;
         }
 
@@ -392,20 +293,119 @@
             width: 100%;
         }
 
-        /* 修正 Canvas 顯示邏輯：僅限眼部畫布使用 100% 高寬 */
         .canvas-wrapper canvas {
             display: block;
             width: 100%;
             height: 100%;
         }
-        
-        /* 比例尺畫布固定高度，確保不被外部拉伸 */
-        #rulerCanvas {
-            display: block;
-            width: 100%;
-            height: 35px;
-            margin-top: 8px;
+
+        /* 新增：將所有資訊整合為頂部單列橫向排列 */
+        .canvas-overlay-header {
+            position: absolute;
+            top: 8px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            pointer-events: none;
         }
+        
+        .header-left-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            pointer-events: auto;
+        }
+
+        .eye-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            color: #ffffff;
+            background: rgba(44, 53, 49, 0.85);
+            border: 1px solid rgba(255,255,255,0.15);
+            backdrop-filter: blur(4px);
+        }
+        .od-badge { border-left: 3px solid #4a6b5d; }
+        .os-badge { border-left: 3px solid #617a72; }
+
+        .power-display {
+            font-size: 10px;
+            font-weight: 700;
+            color: #fff;
+            background: rgba(44, 53, 49, 0.85);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.15);
+            backdrop-filter: blur(4px);
+        }
+
+        /* 改為橫向排列，避免擋到垂直切面 */
+        .thickness-metrics {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 4px;
+            pointer-events: auto;
+            justify-content: flex-end;
+            max-width: 60%;
+        }
+
+        .metric-item {
+            background: rgba(20, 25, 22, 0.85);
+            padding: 3px 6px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #d0ddd5;
+            font-size: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            backdrop-filter: blur(4px);
+        }
+
+        .metric-item span {
+            font-weight: 800;
+            color: #4ade80; 
+            margin-left: 4px;
+            font-size: 11px;
+        }
+
+        .edge-warning {
+            background-color: #fff4e5; color: #8a6d3b; border: 1px solid #ffe8c4;
+            padding: 8px 12px; border-radius: 8px; font-size: 13px; margin-bottom: 8px; line-height: 1.5;
+        }
+        .edge-warning b { color: #d9534f; }
+        
+        .correct-btn {
+            background-color: #d9534f; color: white; border: none; padding: 4px 10px;
+            border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer;
+            margin-left: 10px; vertical-align: middle; transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(217, 83, 79, 0.3);
+        }
+        .correct-btn:hover { background-color: #c9302c; }
+        .correct-btn:active { transform: scale(0.95); }
+
+        .plan-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #232b27;
+            padding: 8px 12px;
+            margin: 0 0 10px 0;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 12px;
+            gap: 10px;
+        }
+        .plan-tool-group { display: flex; align-items: center; gap: 8px; }
+        .plan-toolbar input[type=range] { flex: 1; max-width: 120px; }
+        .dia-warning { color: #ff4d4f; font-weight: bold; font-size: 11px; display: none; }
+        .shape-btn { background: #4a5a51; border: 1px solid #7a9a88; color: white; padding: 2px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; }
+        .shape-btn.active { background: #5e7e6b; font-weight: bold; }
+        
+        #rulerCanvas { display: block; width: 100%; height: 35px; margin-top: 8px; }
 
         .controls-container {
             display: grid;
@@ -447,190 +447,61 @@
         }
         .toggle-params-btn:active { background: #e2eae5; }
 
-        .top-params-flex {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 12px;
-            align-items: stretch;
-            transition: max-height 0.3s ease;
-        }
-        
-        .params-left {
-            flex: 1;
-        }
+        .top-params-flex { display: flex; gap: 15px; margin-bottom: 12px; align-items: stretch; transition: max-height 0.3s ease; }
+        .params-left { flex: 1; }
         
         .ep-slider-container {
-            width: 55px;
-            background: #f4f7f5;
-            border-radius: 8px;
-            border: 1px solid #e2eae5;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px 5px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            width: 55px; background: #f4f7f5; border-radius: 8px; border: 1px solid #e2eae5;
+            display: flex; flex-direction: column; align-items: center; padding: 10px 5px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
         }
-        
-        .ep-label {
-            font-size: 12px;
-            font-weight: 800;
-            color: #4a5a51;
-            margin-bottom: 8px;
-        }
-        
-        .ep-val {
-            font-size: 12px;
-            font-weight: bold;
-            color: #e67e22;
-            margin-top: 8px;
-            background: #fff;
-            padding: 2px 6px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-        }
+        .ep-label { font-size: 12px; font-weight: 800; color: #4a5a51; margin-bottom: 8px; }
+        .ep-val { font-size: 12px; font-weight: bold; color: #e67e22; margin-top: 8px; background: #fff; padding: 2px 6px; border-radius: 4px; border: 1px solid #ccc; }
 
-        input[type=range].vertical-slider {
-            -webkit-appearance: slider-vertical;
-            appearance: slider-vertical;
-            width: 100%;
-            height: 100px;
-            margin: 0;
-            cursor: pointer;
-            flex: 1;
-        }
+        input[type=range].vertical-slider { -webkit-appearance: slider-vertical; appearance: slider-vertical; width: 100%; height: 100px; margin: 0; cursor: pointer; flex: 1; }
 
         .control-row { margin-bottom: 16px; }
         .params-left .control-row { margin-bottom: 12px; }
         .params-left .control-row:last-child { margin-bottom: 0; }
 
-        .control-label-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-        }
+        .control-label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .control-label-row label { font-size: 13px; font-weight: 600; color: #4a5550; }
+        .value-display { font-size: 14px; font-weight: 700; color: #3b5246; background: #eef3f0; padding: 2px 8px; border-radius: 4px; min-width: 55px; text-align: center; }
 
-        .control-label-row label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #4a5550;
-        }
+        .sph-range-container { position: relative; padding-top: 15px; }
+        .zero-marker-box { position: absolute; left: 69.23%; top: 0; transform: translateX(-50%); text-align: center; pointer-events: none; }
+        .zero-marker-text { font-size: 10px; color: #d9534f; font-weight: bold; line-height: 1; }
+        .zero-marker-line { width: 2px; height: 6px; background: #d9534f; margin: 2px auto 0 auto; }
 
-        .value-display {
-            font-size: 14px;
-            font-weight: 700;
-            color: #3b5246;
-            background: #eef3f0;
-            padding: 2px 8px;
-            border-radius: 4px;
-            min-width: 55px;
-            text-align: center;
-        }
-
-        input[type=range].horizontal-slider {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 6px;
-            background: #e0e6e2;
-            border-radius: 3px;
-            outline: none;
-        }
-        
-        input[type=range].horizontal-slider:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
+        input[type=range].horizontal-slider { -webkit-appearance: none; width: 100%; height: 6px; background: #e0e6e2; border-radius: 3px; outline: none; }
+        input[type=range].horizontal-slider:disabled { opacity: 0.5; cursor: not-allowed; }
         input[type=range].horizontal-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #5e7e6b;
-            cursor: pointer;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-            transition: transform 0.1s;
+            -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%;
+            background: #5e7e6b; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.2); transition: transform 0.1s;
         }
+        input[type=range].horizontal-slider::-webkit-slider-thumb:active { transform: scale(1.2); background: #4a6b5d; }
 
-        input[type=range].horizontal-slider::-webkit-slider-thumb:active {
-            transform: scale(1.2);
-            background: #4a6b5d;
-        }
-
-        .segmented-control {
-            display: flex;
-            background: #eee;
-            padding: 3px;
-            border-radius: 8px;
-            background-color: #edf2ef;
-        }
-
-        .segmented-control button {
-            flex: 1;
-            border: none;
-            background: none;
-            padding: 8px 4px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #555e59;
-            cursor: pointer;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-
-        .segmented-control button.active {
-            background-color: #5e7e6b;
-            color: #ffffff;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        }
+        .segmented-control { display: flex; background: #eee; padding: 3px; border-radius: 8px; background-color: #edf2ef; }
+        .segmented-control button { flex: 1; border: none; background: none; padding: 8px 4px; font-size: 12px; font-weight: 600; color: #555e59; cursor: pointer; border-radius: 6px; transition: all 0.2s; }
+        .segmented-control button.active { background-color: #5e7e6b; color: #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+        .mode-toggle-btn { padding: 6px 12px; font-size: 12px; font-weight: bold; }
+        .mode-plan-active { background: #d9534f !important; }
         
         .design-control { margin-bottom: 12px; }
         .design-control button { background-color: #f4f7f5; color: #4a5550; border: 1px solid #ced6d2; }
         .design-control button.active { background-color: #4a6b5d; color: #ffffff; border-color: #4a6b5d; }
 
-        .index-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
-        }
-        .index-grid button {
-            border: 1px solid #ced6d2;
-            background: #ffffff;
-            padding: 6px 2px;
-            font-size: 11px;
-            font-weight: 600;
-            border-radius: 6px;
-            color: #444;
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-        .index-grid button.active {
-            border-color: #5e7e6b;
-            background-color: #eef5f1;
-            color: #2d4237;
-            box-shadow: inset 0 0 0 1px #5e7e6b;
-        }
+        .index-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+        .index-grid button { border: 1px solid #ced6d2; background: #ffffff; padding: 6px 2px; font-size: 11px; font-weight: 600; border-radius: 6px; color: #444; cursor: pointer; transition: all 0.15s; }
+        .index-grid button.active { border-color: #5e7e6b; background-color: #eef5f1; color: #2d4237; box-shadow: inset 0 0 0 1px #5e7e6b; }
         .index-grid button span { display: block; font-size: 9px; opacity: 0.6; font-weight: normal; }
 
         .ct-stepper-container { display: flex; gap: 10px; align-items: center; }
         .ct-stepper-container input[type=range] { flex: 1; }
-        .stepper-btn {
-            width: 32px; height: 32px; border: 1px solid #ced6d2; background: #ffffff;
-            border-radius: 6px; font-size: 18px; font-weight: 600; color: #5e7e6b;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-        }
+        .stepper-btn { width: 32px; height: 32px; border: 1px solid #ced6d2; background: #ffffff; border-radius: 6px; font-size: 18px; font-weight: 600; color: #5e7e6b; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .stepper-btn:active { background-color: #edf2ef; }
-
-        .mode-toggle-btn {
-            padding: 6px 12px;
-            font-size: 12px;
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
-
     <div id="orientation-warning">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
@@ -640,6 +511,9 @@
         <p>此高階演示軟體專為橫向螢幕 (Landscape) 設計，<br>請將設備打橫以獲得最佳瀏覽體驗與準確比例。</p>
     </div>
 
+    <!-- SPH 0D 參考點 -->
+    <datalist id="sph-marks"><option value="0"></option></datalist>
+
     <div id="app-content">
         <header class="top-header">
             <div class="header-title-area">
@@ -648,7 +522,7 @@
             </div>
             <div class="system-status">
                 <div class="segmented-control" style="background:#4a6b5d; border: 1px solid #7a9a88;">
-                    <button id="btn-mode-single" class="mode-toggle-btn" onclick="setViewMode('single')" style="color:#fff;">單視角(僅水平)</button>
+                    <button id="btn-mode-plan" class="mode-toggle-btn" onclick="setViewMode('plan')" style="color:#fff;">片徑規劃</button>
                     <button id="btn-mode-dual" class="mode-toggle-btn active" onclick="setViewMode('dual')" style="color:#fff;">雙視角(水+垂)</button>
                 </div>
                 <div class="status-tag">裝配模式：全自動演算</div>
@@ -677,21 +551,16 @@
                         <label style="color:#2b6bb8;">B高</label>
                         <input type="tel" inputmode="decimal" id="frameB" value="40" onfocus="this.select()" oninput="validateAndSync()">
                     </div>
-                    
                     <div class="inline-input-group" title="ED (有效直徑)為鏡框最大對角線，影響原片大小計算">
                         <label style="color:#e67e22;">ED</label>
                         <input type="tel" inputmode="decimal" id="frameED" value="40" onfocus="this.select()" oninput="validateAndSync()">
                     </div>
-                    
                     <div class="pd-separator"></div>
-                    
                     <div class="inline-input-group">
                         <label style="color:#d9534f;">總PD</label>
                         <input type="tel" inputmode="decimal" id="pdTotal" value="64.0" onfocus="this.select()" oninput="updatePDTotal()">
                     </div>
-                    
                     <div class="pd-separator"></div>
-                    
                     <div class="inline-input-group">
                         <label style="color:#4a6b5d;">R.PD</label>
                         <input type="tel" inputmode="decimal" id="pdOD" value="32.0" onfocus="this.select()" oninput="updatePDSingle()">
@@ -704,12 +573,12 @@
                 
                 <div class="blank-recommendation">
                     <div class="blank-item">
-                        <span class="blank-label">右眼 OD 原片直徑 (含EP)</span>
-                        <span class="blank-value" id="blank-od">Ø 65 mm</span>
+                        <span class="blank-label">右眼 OD 安全原片直徑 (含EP/偏心)</span>
+                        <span class="blank-value" id="blank-od">計算中...</span>
                     </div>
                     <div class="blank-item">
-                        <span class="blank-label">左眼 OS 原片直徑 (含EP)</span>
-                        <span class="blank-value" id="blank-os">Ø 65 mm</span>
+                        <span class="blank-label">左眼 OS 安全原片直徑 (含EP/偏心)</span>
+                        <span class="blank-value" id="blank-os">計算中...</span>
                     </div>
                 </div>
             </div>
@@ -729,45 +598,85 @@
         </section>
 
         <main class="display-container">
+            <!-- 右眼 OD -->
             <div class="eye-card">
                 <div id="warning-od" class="edge-warning" style="display:none;"></div>
-                <div class="eye-card-header">
-                    <div style="display:flex; align-items:center;">
-                        <div class="eye-badge od-badge">右眼 OD 面向客戶視角</div>
-                        <div class="power-display" id="power-display-od">S: -4.00 | C: 0.00 | A: 180°</div>
-                    </div>
-                    <div class="thickness-metrics">
-                        <div class="metric-item">CT:<span id="metric-ct-od">1.5</span></div>
-                        <div class="metric-item">顳側:<span id="metric-temp-od">--</span></div>
-                        <div class="metric-item">鼻側:<span id="metric-nasal-od">--</span></div>
-                        <div class="metric-item vertical-metric">上緣:<span id="metric-top-od">--</span></div>
-                        <div class="metric-item vertical-metric">下緣:<span id="metric-bot-od">--</span></div>
-                    </div>
-                </div>
+                
                 <div class="eye-body-layout">
+                    <!-- 懸浮在畫布頂部的片徑規劃工具列 -->
+                    <div class="plan-toolbar" id="toolbar-od" style="display:none;">
+                        <div class="plan-tool-group">
+                            <span>片徑 <span id="val-dia-od" style="color:#8abda5; font-weight:bold;">自動</span></span>
+                            <input type="range" id="dia-od" min="50" max="85" step="1" value="70" oninput="syncAll()">
+                            <span class="dia-warning" id="warn-dia-od">⚠️ 過小</span>
+                        </div>
+                        <div class="plan-tool-group" id="prog-tools-od" style="display:none;">
+                            <span>形狀</span>
+                            <button class="shape-btn active" id="shape-circle-od" onclick="setShape('od','circle')">圓</button>
+                            <button class="shape-btn" id="shape-ellipse-od" onclick="setShape('od','ellipse')">橢</button>
+                            <span style="margin-left:8px;">累進帶 <span id="val-corridor-od" style="color:#e67e22;">10</span></span>
+                            <input type="range" id="corridor-od" min="9" max="16" step="1" value="10" style="width:60px;" oninput="syncAll()">
+                        </div>
+                    </div>
+
                     <div class="canvas-wrapper">
+                        <!-- 全橫排的極簡資訊區 -->
+                        <div class="canvas-overlay-header">
+                            <div class="header-left-group">
+                                <div class="eye-badge od-badge">右眼 OD</div>
+                                <div class="power-display" id="power-display-od">S: -4.00 | C: 0.00 | A: 180°</div>
+                            </div>
+                            <div class="thickness-metrics">
+                                <div class="metric-item">CT: <span id="metric-ct-od">1.5</span></div>
+                                <div class="metric-item">鼻側: <span id="metric-nasal-od">--</span></div>
+                                <div class="metric-item">顳側: <span id="metric-temp-od">--</span></div>
+                                <div class="metric-item vertical-metric">上緣: <span id="metric-top-od">--</span></div>
+                                <div class="metric-item vertical-metric">下緣: <span id="metric-bot-od">--</span></div>
+                            </div>
+                        </div>
+                        <!-- 畫布本體 -->
                         <canvas id="canvasOD"></canvas>
                     </div>
                 </div>
             </div>
 
+            <!-- 左眼 OS -->
             <div class="eye-card">
                 <div id="warning-os" class="edge-warning" style="display:none;"></div>
-                <div class="eye-card-header">
-                    <div style="display:flex; align-items:center;">
-                        <div class="eye-badge os-badge">左眼 OS 面向客戶視角</div>
-                        <div class="power-display" id="power-display-os">S: -4.00 | C: 0.00 | A: 180°</div>
-                    </div>
-                    <div class="thickness-metrics">
-                        <div class="metric-item">CT:<span id="metric-ct-os">1.5</span></div>
-                        <div class="metric-item">鼻側:<span id="metric-nasal-os">--</span></div>
-                        <div class="metric-item">顳側:<span id="metric-temp-os">--</span></div>
-                        <div class="metric-item vertical-metric">上緣:<span id="metric-top-os">--</span></div>
-                        <div class="metric-item vertical-metric">下緣:<span id="metric-bot-os">--</span></div>
-                    </div>
-                </div>
+                
                 <div class="eye-body-layout">
+                    <!-- 懸浮在畫布頂部的片徑規劃工具列 -->
+                    <div class="plan-toolbar" id="toolbar-os" style="display:none;">
+                        <div class="plan-tool-group">
+                            <span>片徑 <span id="val-dia-os" style="color:#8abda5; font-weight:bold;">自動</span></span>
+                            <input type="range" id="dia-os" min="50" max="85" step="1" value="70" oninput="syncAll()">
+                            <span class="dia-warning" id="warn-dia-os">⚠️ 過小</span>
+                        </div>
+                        <div class="plan-tool-group" id="prog-tools-os" style="display:none;">
+                            <span>形狀</span>
+                            <button class="shape-btn active" id="shape-circle-os" onclick="setShape('os','circle')">圓</button>
+                            <button class="shape-btn" id="shape-ellipse-os" onclick="setShape('os','ellipse')">橢</button>
+                            <span style="margin-left:8px;">累進帶 <span id="val-corridor-os" style="color:#e67e22;">10</span></span>
+                            <input type="range" id="corridor-os" min="9" max="16" step="1" value="10" style="width:60px;" oninput="syncAll()">
+                        </div>
+                    </div>
+
                     <div class="canvas-wrapper">
+                        <!-- 全橫排的極簡資訊區 -->
+                        <div class="canvas-overlay-header">
+                            <div class="header-left-group">
+                                <div class="eye-badge os-badge">左眼 OS</div>
+                                <div class="power-display" id="power-display-os">S: -4.00 | C: 0.00 | A: 180°</div>
+                            </div>
+                            <div class="thickness-metrics">
+                                <div class="metric-item">CT: <span id="metric-ct-os">1.5</span></div>
+                                <div class="metric-item">鼻側: <span id="metric-nasal-os">--</span></div>
+                                <div class="metric-item">顳側: <span id="metric-temp-os">--</span></div>
+                                <div class="metric-item vertical-metric">上緣: <span id="metric-top-os">--</span></div>
+                                <div class="metric-item vertical-metric">下緣: <span id="metric-bot-os">--</span></div>
+                            </div>
+                        </div>
+                        <!-- 畫布本體 -->
                         <canvas id="canvasOS"></canvas>
                     </div>
                 </div>
@@ -775,6 +684,7 @@
         </main>
 
         <footer class="controls-container">
+            <!-- 右眼 OD 控制面板 -->
             <div class="control-panel">
                 <div class="panel-title">
                     右眼 OD 參數設定
@@ -788,7 +698,13 @@
                                 <label>球面度數 (SPH)</label>
                                 <div class="value-display" id="val-sph-od">-4.00</div>
                             </div>
-                            <input type="range" class="horizontal-slider" id="sph-od" min="-15.00" max="8.00" step="0.25" value="-4.00" oninput="updatePower('od')">
+                            <div class="sph-range-container">
+                                <div class="zero-marker-box">
+                                    <div class="zero-marker-text">0.00</div>
+                                    <div class="zero-marker-line"></div>
+                                </div>
+                                <input type="range" class="horizontal-slider" id="sph-od" min="-18.00" max="8.00" step="0.25" value="-4.00" list="sph-marks" oninput="updatePower('od')">
+                            </div>
                         </div>
 
                         <div class="control-row">
@@ -799,6 +715,14 @@
                             <input type="range" class="horizontal-slider" id="cyl-od" min="-6.00" max="0.00" step="0.25" value="0.00" oninput="updatePower('od')">
                         </div>
                         
+                        <div class="control-row">
+                            <div class="control-label-row">
+                                <label style="color:#d9534f;">多焦加入度 (ADD)</label>
+                                <div class="value-display" id="val-add-od" style="background:#fdecec; color:#c9302c;">0.00</div>
+                            </div>
+                            <input type="range" class="horizontal-slider" id="add-od" min="0.00" max="3.50" step="0.25" value="0.00" oninput="updatePower('od')">
+                        </div>
+
                         <div class="control-row">
                             <div class="control-label-row">
                                 <label>散光軸度 (AXIS)</label>
@@ -868,6 +792,7 @@
                 </div>
             </div>
 
+            <!-- 左眼 OS 控制面板 -->
             <div class="control-panel">
                 <div class="panel-title">
                     左眼 OS 參數設定
@@ -881,7 +806,13 @@
                                 <label>球面度數 (SPH)</label>
                                 <div class="value-display" id="val-sph-os">-4.00</div>
                             </div>
-                            <input type="range" class="horizontal-slider" id="sph-os" min="-15.00" max="8.00" step="0.25" value="-4.00" oninput="updatePower('os')">
+                            <div class="sph-range-container">
+                                <div class="zero-marker-box">
+                                    <div class="zero-marker-text">0.00</div>
+                                    <div class="zero-marker-line"></div>
+                                </div>
+                                <input type="range" class="horizontal-slider" id="sph-os" min="-18.00" max="8.00" step="0.25" value="-4.00" list="sph-marks" oninput="updatePower('os')">
+                            </div>
                         </div>
 
                         <div class="control-row">
@@ -890,6 +821,14 @@
                                 <div class="value-display" id="val-cyl-os">0.00</div>
                             </div>
                             <input type="range" class="horizontal-slider" id="cyl-os" min="-6.00" max="0.00" step="0.25" value="0.00" oninput="updatePower('os')">
+                        </div>
+
+                        <div class="control-row">
+                            <div class="control-label-row">
+                                <label style="color:#d9534f;">多焦加入度 (ADD)</label>
+                                <div class="value-display" id="val-add-os" style="background:#fdecec; color:#c9302c;">0.00</div>
+                            </div>
+                            <input type="range" class="horizontal-slider" id="add-os" min="0.00" max="3.50" step="0.25" value="0.00" oninput="updatePower('os')">
                         </div>
                         
                         <div class="control-row">
@@ -971,8 +910,8 @@
             frameED: 40,
             frameDBL: 18,
             pdTotal: 64.0,
-            od: { sph: -4.00, cyl: 0.00, axis: 180, index: 1.50, ct: 1.5, ep: 24, edgeType: 'V', ratio: 0.33, design: 'SPH' },
-            os: { sph: -4.00, cyl: 0.00, axis: 180, index: 1.50, ct: 1.5, ep: 24, edgeType: 'V', ratio: 0.33, design: 'SPH' },
+            od: { sph: -4.00, cyl: 0.00, axis: 180, add: 0.00, index: 1.50, ct: 1.5, ep: 24, edgeType: 'V', ratio: 0.33, design: 'SPH', dia: null, shape: 'circle', corridor: 10 },
+            os: { sph: -4.00, cyl: 0.00, axis: 180, add: 0.00, index: 1.50, ct: 1.5, ep: 24, edgeType: 'V', ratio: 0.33, design: 'SPH', dia: null, shape: 'circle', corridor: 10 },
             pdOD: 32.0,
             pdOS: 32.0
         };
@@ -983,6 +922,7 @@
         window.addEventListener('load', () => {
             setupCanvasResizing();
             initEP(); 
+            initDIA(); 
             updatePower('od', false);
             updatePower('os', false);
             setTimeout(syncAll, 50);
@@ -1001,23 +941,46 @@
             const btnPlus = document.getElementById('calibPlus');
             
             if (isCalibLocked) {
-                btn.innerText = '🔒';
-                btn.classList.remove('unlocked');
-                slider.disabled = true;
-                btnMinus.disabled = true;
-                btnPlus.disabled = true;
+                btn.innerText = '🔒'; btn.classList.remove('unlocked');
+                slider.disabled = true; btnMinus.disabled = true; btnPlus.disabled = true;
             } else {
-                btn.innerText = '🔓';
-                btn.classList.add('unlocked');
-                slider.disabled = false;
-                btnMinus.disabled = false;
-                btnPlus.disabled = false;
+                btn.innerText = '🔓'; btn.classList.add('unlocked');
+                slider.disabled = false; btnMinus.disabled = false; btnPlus.disabled = false;
             }
+        }
+
+        function getMinBlankDia(eye) {
+            const pd = eye === 'od' ? state.pdOD : state.pdOS;
+            const ep = state[eye].ep;
+            const ed = state.frameED;
+            
+            const decH = Math.max(0, ((state.frameA + state.frameDBL) / 2) - pd);
+            const decV = Math.abs(ep - (state.frameB / 2));
+            
+            const reqW = ed + 2 * Math.sqrt(decH*decH + decV*decV) + 2; 
+            let minDia = Math.ceil(reqW);
+
+            if (state[eye].shape === 'ellipse') {
+                 const reqH = state.frameB + 2 * decV + 2; 
+                 minDia = Math.max(minDia, Math.ceil(reqH + 10)); 
+            }
+            return minDia;
+        }
+
+        function initDIA() {
+            ['od', 'os'].forEach(eye => {
+                let min = getMinBlankDia(eye);
+                let stdBlanks = [55, 60, 65, 70, 75, 80, 85];
+                let rec = stdBlanks.find(b => b >= min) || min;
+                state[eye].dia = rec;
+                document.getElementById(`dia-${eye}`).value = rec;
+            });
         }
 
         function updatePower(eye, doSync = true) {
             state[eye].sph = parseFloat(document.getElementById(`sph-${eye}`).value);
             state[eye].cyl = parseFloat(document.getElementById(`cyl-${eye}`).value);
+            state[eye].add = parseFloat(document.getElementById(`add-${eye}`).value);
             
             const newCT = getIndustryStandardCT(eye);
             state[eye].ct = newCT;
@@ -1044,7 +1007,8 @@
                 if (design === 'DAS' && baseCT >= 1.0) baseCT -= 0.1;
                 return Math.max(0.8, baseCT);
             } else {
-                let diameter = Math.max(60, state.frameED + 5); 
+                let minBlank = getMinBlankDia(eye);
+                let diameter = eyeState.dia || Math.max(60, minBlank); 
                 let y = diameter / 2;
                 let sag = (power * y * y) / (2000 * (n - 1));
                 
@@ -1054,43 +1018,43 @@
                 let edgeThickness = (n >= 1.80) ? 0.8 : 1.0;
                 let estimatedCT = sag + edgeThickness;
                 
-                estimatedCT = Math.round(estimatedCT * 10) / 10;
-                return Math.max(1.0, Math.min(estimatedCT, 15.0));
+                return Math.max(1.0, Math.min(Math.round(estimatedCT * 10) / 10, 15.0));
             }
         }
 
         function toggleParams(eye) {
             const flex = document.getElementById(`params-flex-${eye}`);
             const btn = document.getElementById(`btn-toggle-${eye}`);
-            if (flex.style.display === 'none') {
-                flex.style.display = 'flex';
-                btn.innerText = '收起度數/EP';
-            } else {
-                flex.style.display = 'none';
-                btn.innerText = '展開度數/EP';
-            }
+            if (flex.style.display === 'none') { flex.style.display = 'flex'; btn.innerText = '收起度數/EP'; } 
+            else { flex.style.display = 'none'; btn.innerText = '展開度數/EP'; }
         }
 
         function setViewMode(mode) {
             state.viewMode = mode;
             
-            document.getElementById('btn-mode-single').classList.toggle('active', mode === 'single');
+            document.getElementById('btn-mode-plan').classList.toggle('mode-plan-active', mode === 'plan');
             document.getElementById('btn-mode-dual').classList.toggle('active', mode === 'dual');
-            document.getElementById('btn-mode-single').style.background = mode === 'single' ? '#5e7e6b' : 'transparent';
             document.getElementById('btn-mode-dual').style.background = mode === 'dual' ? '#5e7e6b' : 'transparent';
             
-            const layouts = document.querySelectorAll('.eye-body-layout');
             const vMetrics = document.querySelectorAll('.vertical-metric');
+            const toolbars = document.querySelectorAll('.plan-toolbar');
             
-            if (mode === 'single') {
-                layouts.forEach(el => el.style.height = '200px'); 
+            if (mode === 'plan') {
                 vMetrics.forEach(el => el.style.display = 'none'); 
+                toolbars.forEach(el => el.style.display = 'flex');
             } else {
-                layouts.forEach(el => el.style.height = '340px'); 
                 vMetrics.forEach(el => el.style.display = 'block'); 
+                toolbars.forEach(el => el.style.display = 'none');
             }
             
             setupCanvasResizing();
+            syncAll();
+        }
+        
+        function setShape(eye, type) {
+            state[eye].shape = type;
+            document.getElementById(`shape-circle-${eye}`).classList.toggle('active', type === 'circle');
+            document.getElementById(`shape-ellipse-${eye}`).classList.toggle('active', type === 'ellipse');
             syncAll();
         }
 
@@ -1108,7 +1072,6 @@
                 }
             });
 
-            // 修正比例尺畫布的解析度同步，確保完全不被CSS拉伸而變形
             const rCanvas = document.getElementById('rulerCanvas');
             const rRect = rCanvas.getBoundingClientRect();
             if (rRect.width > 0) {
@@ -1124,15 +1087,13 @@
             let defaultEP = (state.frameB / 2) + 4;
             document.getElementById('ep-od').value = defaultEP;
             document.getElementById('ep-os').value = defaultEP;
-            state.od.ep = defaultEP;
-            state.os.ep = defaultEP;
+            state.od.ep = defaultEP; state.os.ep = defaultEP;
         }
         
         function updatePDTotal() {
             let total = parseFloat(document.getElementById('pdTotal').value) || 64;
             let half = total / 2;
-            document.getElementById('pdOD').value = half.toFixed(1);
-            document.getElementById('pdOS').value = half.toFixed(1);
+            document.getElementById('pdOD').value = half.toFixed(1); document.getElementById('pdOS').value = half.toFixed(1);
             validateAndSync();
         }
         
@@ -1148,11 +1109,7 @@
             let oldB = state.frameB;
             state.frameB = parseFloat(document.getElementById('frameB').value) || 40;
             
-            if(oldB !== state.frameB) {
-                let defaultEP = (state.frameB / 2) + 4;
-                document.getElementById('ep-od').value = defaultEP;
-                document.getElementById('ep-os').value = defaultEP;
-            }
+            if(oldB !== state.frameB) { initEP(); }
 
             state.frameED = parseFloat(document.getElementById('frameED').value) || 40;
             state.frameDBL = parseFloat(document.getElementById('frameDBL').value) || 16;
@@ -1169,18 +1126,13 @@
         function stepCalib(val) {
             if(isCalibLocked) return;
             let el = document.getElementById('calibScale');
-            let cur = parseFloat(el.value);
-            let next = (cur + val).toFixed(2);
-            if (next >= 3 && next <= 8) {
-                el.value = next;
-                syncAll();
-            }
+            let cur = parseFloat(el.value); let next = (cur + val).toFixed(2);
+            if (next >= 3 && next <= 8) { el.value = next; syncAll(); }
         }
 
         function setIndex(eye, value) {
             state[eye].index = value;
-            const container = document.getElementById(`index-grid-${eye}`);
-            const buttons = container.getElementsByTagName('button');
+            const buttons = document.getElementById(`index-grid-${eye}`).getElementsByTagName('button');
             const idxMap = [1.50, 1.56, 1.60, 1.67, 1.74, 1.76, 1.80, 1.90];
             for(let i=0; i<buttons.length; i++) {
                 if(idxMap[i] === value) buttons[i].classList.add('active');
@@ -1191,8 +1143,7 @@
         
         function setDesignType(eye, type) {
             state[eye].design = type;
-            const container = document.getElementById(`design-type-${eye}`);
-            const buttons = container.getElementsByTagName('button');
+            const buttons = document.getElementById(`design-type-${eye}`).getElementsByTagName('button');
             buttons[0].classList.toggle('active', type === 'SPH');
             buttons[1].classList.toggle('active', type === 'ASP');
             buttons[2].classList.toggle('active', type === 'DAS');
@@ -1201,113 +1152,66 @@
 
         function stepCT(eye, val) {
             let el = document.getElementById(`ct-${eye}`);
-            let cur = parseFloat(el.value);
-            let next = (cur + val).toFixed(1);
-            if(next >= 0.8 && next <= 15.0) {
-                el.value = next;
-                syncAll();
-            }
+            let cur = parseFloat(el.value); let next = (cur + val).toFixed(1);
+            if(next >= 0.8 && next <= 15.0) { el.value = next; syncAll(); }
         }
-        
-        function applySafeCT(eye, safeCT) {
-            document.getElementById(`ct-${eye}`).value = safeCT;
-            state[eye].ct = safeCT;
-            syncAll();
-        }
+        function applySafeCT(eye, safeCT) { document.getElementById(`ct-${eye}`).value = safeCT; state[eye].ct = safeCT; syncAll(); }
 
         function setEdgeType(eye, type) {
             state[eye].edgeType = type;
-            const container = document.getElementById(`edge-type-${eye}`);
-            const buttons = container.getElementsByTagName('button');
+            const buttons = document.getElementById(`edge-type-${eye}`).getElementsByTagName('button');
             buttons[0].classList.toggle('active', type === 'V');
             buttons[1].classList.toggle('active', type === 'G');
             buttons[2].classList.toggle('active', type === 'F');
-            
-            const ratioRow = document.getElementById(`ratio-row-${eye}`);
-            if(type === 'F') ratioRow.style.opacity = '0.3';
-            else ratioRow.style.opacity = '1';
-            
+            document.getElementById(`ratio-row-${eye}`).style.opacity = type === 'F' ? '0.3' : '1';
             syncAll();
         }
 
-        function formatDegree(val) {
-            return val > 0 ? `+${val.toFixed(2)}` : val.toFixed(2);
-        }
+        function formatDegree(val) { return val > 0 ? `+${val.toFixed(2)}` : val.toFixed(2); }
 
         function drawRuler(userScale) {
             const rCanvas = document.getElementById('rulerCanvas');
             const rctx = rCanvas.getContext('2d');
-            
-            // 使用正確的 CSS 尺寸清除畫布
             const cssWidth = rCanvas.width / window.devicePixelRatio;
             const cssHeight = rCanvas.height / window.devicePixelRatio;
             rctx.clearRect(0, 0, cssWidth, cssHeight);
             
             const mmToPx = userScale * BASE_SCALE_MULTIPLIER;
+            rctx.fillStyle = '#2c3531'; rctx.font = '11px Arial'; rctx.lineWidth = 1.5; rctx.strokeStyle = '#2c3531';
             
-            rctx.fillStyle = '#2c3531';
-            rctx.font = '11px Arial';
-            rctx.lineWidth = 1.5;
-            rctx.strokeStyle = '#2c3531';
-            
-            rctx.beginPath();
-            rctx.moveTo(10, 25);
-            rctx.lineTo(10 + 100 * mmToPx, 25); 
-            rctx.stroke();
-
+            rctx.beginPath(); rctx.moveTo(10, 25); rctx.lineTo(10 + 100 * mmToPx, 25); rctx.stroke();
             rctx.lineWidth = 1;
             for(let mm=0; mm<=100; mm++) {
                 let x = 10 + mm * mmToPx;
                 if (x > cssWidth - 15) break; 
-                
-                rctx.beginPath();
-                rctx.moveTo(x, 25);
-                if(mm % 10 === 0) { 
-                    rctx.lineTo(x, 8);
-                    rctx.fillText((mm/10) + " cm", x - 12, 7);
-                } else if(mm % 5 === 0) { 
-                    rctx.lineTo(x, 14);
-                } else { 
-                    rctx.lineTo(x, 19);
-                }
+                rctx.beginPath(); rctx.moveTo(x, 25);
+                if(mm % 10 === 0) { rctx.lineTo(x, 8); rctx.fillText((mm/10) + " cm", x - 12, 7); }
+                else if(mm % 5 === 0) { rctx.lineTo(x, 14); }
+                else { rctx.lineTo(x, 19); }
                 rctx.stroke();
             }
         }
-        
-        function calculateBlankSize(eyeType) {
-            const pd = eyeType === 'OD' ? state.pdOD : state.pdOS;
-            const ep = eyeType === 'OD' ? state.od.ep : state.os.ep;
-            
-            const decH = Math.max(0, ((state.frameA + state.frameDBL) / 2) - pd);
-            const decV = Math.abs(ep - (state.frameB / 2));
-            const totalDec = Math.sqrt(decH * decH + decV * decV);
-            
-            const minBlank = state.frameED + (2 * totalDec) + 2;
-            
-            const standardBlanks = [55, 60, 65, 70, 75, 80];
-            let recommend = 80;
-            for(let b of standardBlanks) {
-                if(b >= minBlank) {
-                    recommend = b;
-                    break;
-                }
-            }
-            
-            return recommend >= minBlank ? `Ø ${recommend} mm` : `> Ø 80 (特製)`;
-        }
-
-        function clamp(val, min, max) {
-            return Math.max(min, Math.min(val, max));
-        }
+        function clamp(val, min, max) { return Math.max(min, Math.min(val, max)); }
 
         function syncAll() {
             ['od', 'os'].forEach(eye => {
                 state[eye].sph = parseFloat(document.getElementById(`sph-${eye}`).value);
                 state[eye].cyl = parseFloat(document.getElementById(`cyl-${eye}`).value);
+                state[eye].add = parseFloat(document.getElementById(`add-${eye}`).value);
                 state[eye].axis = parseInt(document.getElementById(`axis-${eye}`).value);
                 state[eye].ct = parseFloat(document.getElementById(`ct-${eye}`).value);
                 state[eye].ratio = parseInt(document.getElementById(`ratio-${eye}`).value) / 100;
                 state[eye].ep = parseFloat(document.getElementById(`ep-${eye}`).value);
+                state[eye].dia = parseFloat(document.getElementById(`dia-${eye}`).value);
+                state[eye].corridor = parseInt(document.getElementById(`corridor-${eye}`).value);
+
+                let minDia = getMinBlankDia(eye);
+                let stdBlanks = [55, 60, 65, 70, 75, 80, 85];
+                let rec = stdBlanks.find(b => b >= minDia) || minDia;
+                document.getElementById(`blank-${eye}`).innerText = rec >= minDia ? `Ø ${rec} mm` : `> Ø 80 (特製)`;
+                
+                document.getElementById(`warn-dia-${eye}`).style.display = state[eye].dia < minDia ? 'inline' : 'none';
+                document.getElementById(`val-dia-${eye}`).innerText = `Ø ${state[eye].dia}`;
 
                 document.getElementById(`val-sph-${eye}`).innerText = formatDegree(state[eye].sph);
                 document.getElementById(`val-cyl-${eye}`).innerText = formatDegree(state[eye].cyl);
@@ -1315,23 +1219,22 @@
                 document.getElementById(`val-ct-${eye}`).innerText = `${state[eye].ct.toFixed(1)} mm`;
                 document.getElementById(`val-ep-${eye}`).innerText = state[eye].ep.toFixed(1);
                 document.getElementById(`val-ratio-${eye}`).innerText = `${Math.round(state[eye].ratio*100)}%`;
-                document.getElementById(`metric-ct-${eye}`).innerText = state[eye].ct.toFixed(1);
                 
-                document.getElementById(`power-display-${eye}`).innerText = `S: ${formatDegree(state[eye].sph)} | C: ${formatDegree(state[eye].cyl)} | A: ${state[eye].axis}°`;
+                document.getElementById(`metric-ct-${eye}`).innerText = state[eye].ct.toFixed(1);
+                document.getElementById(`val-add-${eye}`).innerText = state[eye].add > 0 ? `+${state[eye].add.toFixed(2)}` : '0.00';
+                document.getElementById(`val-corridor-${eye}`).innerText = state[eye].corridor;
+                document.getElementById(`prog-tools-${eye}`).style.display = (state.viewMode === 'plan' && state[eye].add > 0) ? 'flex' : 'none';
+                
+                document.getElementById(`power-display-${eye}`).innerText = `S: ${formatDegree(state[eye].sph)} | C: ${formatDegree(state[eye].cyl)} | A: ${state[eye].axis}°${state[eye].add > 0 ? ` | Add: +${state[eye].add.toFixed(2)}` : ''}`;
             });
 
             document.getElementById('frame-display-title').innerText = `(${state.frameA} □ ${state.frameDBL})`;
             
-            document.getElementById('blank-od').innerText = calculateBlankSize('OD');
-            document.getElementById('blank-os').innerText = calculateBlankSize('OS');
-
             let userScale = parseFloat(document.getElementById('calibScale').value);
             document.getElementById('calib-val').innerText = userScale.toFixed(2) + 'x';
-            
             drawRuler(userScale); 
             
             let actualRenderScale = userScale * BASE_SCALE_MULTIPLIER;
-
             renderEye('canvasOD', 'OD', actualRenderScale);
             renderEye('canvasOS', 'OS', actualRenderScale);
         }
@@ -1339,34 +1242,76 @@
         function renderEye(canvasId, type, mmToPx) {
             const canvas = document.getElementById(canvasId);
             const ctx = canvas.getContext('2d');
-            
             if (!canvas.width || !canvas.height) return;
             
             const w = canvas.width / window.devicePixelRatio;
             const h = canvas.height / window.devicePixelRatio;
-            
             ctx.clearRect(0, 0, w, h);
-
-            const isDual = state.viewMode === 'dual';
 
             const eyeState = type === 'OD' ? state.od : state.os;
             const pd = type === 'OD' ? state.pdOD : state.pdOS;
             const ep = eyeState.ep;
             
+            const decH = ((state.frameA + state.frameDBL) / 2) - pd;
+            const decV = ep - (state.frameB / 2);
+
+            // ==========================================
+            // 片徑規劃模式 (Frontal Blank View)
+            // ==========================================
+            if (state.viewMode === 'plan') {
+                const cx = w / 2;
+                const cy = h / 2; 
+                
+                ctx.fillStyle = 'rgba(255,255,255,0.05)';
+                for(let r=10; r<=40; r+=10) {
+                    ctx.beginPath(); ctx.arc(cx, cy, r*mmToPx, 0, Math.PI*2);
+                    ctx.strokeStyle = 'rgba(255,255,255,0.1)'; ctx.stroke();
+                    if(r===40) { ctx.fillStyle='rgba(255,255,255,0.3)'; ctx.fillText('Ø80', cx, cy - r*mmToPx - 2); }
+                }
+
+                ctx.beginPath();
+                if (eyeState.shape === 'ellipse') {
+                    ctx.ellipse(cx, cy, (eyeState.dia/2)*mmToPx, (eyeState.dia/2 - 5)*mmToPx, 0, 0, Math.PI*2);
+                } else {
+                    ctx.arc(cx, cy, (eyeState.dia/2)*mmToPx, 0, Math.PI*2);
+                }
+                
+                let glassGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, (eyeState.dia/2)*mmToPx);
+                glassGrad.addColorStop(0, 'rgba(150, 210, 230, 0.15)'); glassGrad.addColorStop(1, 'rgba(150, 210, 230, 0.35)');
+                ctx.fillStyle = glassGrad; ctx.fill();
+                ctx.strokeStyle = '#8abda5'; ctx.lineWidth = 1.5; ctx.stroke();
+                
+                ctx.beginPath(); ctx.moveTo(cx-10, cy); ctx.lineTo(cx+10, cy); ctx.moveTo(cx, cy-10); ctx.lineTo(cx, cy+10);
+                ctx.strokeStyle='#fff'; ctx.lineWidth=1.5; ctx.stroke();
+                ctx.fillStyle='#fff'; ctx.font = '12px Arial'; ctx.textAlign = 'left'; ctx.fillText('OC', cx+12, cy+12);
+
+                if (eyeState.add > 0) {
+                    ctx.beginPath(); ctx.arc(cx, cy - 2*mmToPx, 2, 0, Math.PI*2); ctx.fillStyle='#e67e22'; ctx.fill(); 
+                    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx, cy + eyeState.corridor*mmToPx); 
+                    ctx.strokeStyle='rgba(230,126,34,0.7)'; ctx.setLineDash([3,3]); ctx.stroke(); ctx.setLineDash([]);
+                    
+                    let insetX = type === 'OD' ? 2.5 : -2.5; 
+                    ctx.beginPath(); ctx.arc(cx + insetX*mmToPx, cy + eyeState.corridor*mmToPx, 7*mmToPx, 0, Math.PI*2);
+                    ctx.strokeStyle='#e67e22'; ctx.lineWidth=2; ctx.stroke();
+                    ctx.fillStyle='#e67e22'; ctx.textAlign='center'; ctx.fillText(`ADD +${eyeState.add.toFixed(2)}`, cx + insetX*mmToPx, cy + eyeState.corridor*mmToPx + 16);
+                }
+                
+                ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.font = '12px Arial';
+                ctx.fillText("請將鏡框直接放於螢幕上對照比例與光心", w/2, h - 20);
+                
+                return; 
+            }
+
+            // ==========================================
+            // 切面模式 (Dual Mode)
+            // ==========================================
             const rad = eyeState.axis * Math.PI / 180;
             const powerH = eyeState.sph + eyeState.cyl * Math.pow(Math.sin(rad), 2);
             const powerV = eyeState.sph + eyeState.cyl * Math.pow(Math.cos(rad), 2);
 
-            const decH = ((state.frameA + state.frameDBL) / 2) - pd;
-
             let xNasal, xTemporal;
-            if (type === 'OD') {
-                xNasal = (state.frameA / 2) - decH;
-                xTemporal = -((state.frameA / 2) + decH);
-            } else {
-                xNasal = -((state.frameA / 2) - decH); 
-                xTemporal = (state.frameA / 2) + decH;
-            }
+            if (type === 'OD') { xNasal = (state.frameA / 2) - decH; xTemporal = -((state.frameA / 2) + decH); }
+            else { xNasal = -((state.frameA / 2) - decH); xTemporal = (state.frameA / 2) + decH; }
             
             const yTopReal = state.frameB - ep;
             const yBotReal = -ep;
@@ -1377,323 +1322,168 @@
                 else bc = Math.max(0.5, 4.0 + power * 0.35);
                 
                 let flatFront = 1.0, flatBack = 1.0;
-                if (eyeState.design === 'ASP') {
-                    flatFront = 0.75; 
-                    if(power < 0) flatBack = 0.9;
-                } else if (eyeState.design === 'DAS') {
-                    flatFront = 0.6; flatBack = 0.75;
-                }
+                if (eyeState.design === 'ASP') { flatFront = 0.75; if(power < 0) flatBack = 0.9; }
+                else if (eyeState.design === 'DAS') { flatFront = 0.6; flatBack = 0.75; }
 
                 return {
                     r1: (((eyeState.index - 1) / bc) * 1000) / flatFront,
                     r2: (((eyeState.index - 1) / (bc - power)) * 1000) / flatBack
                 };
             }
-            
-            const radiiH = getRadii(powerH);
-            const radiiV = getRadii(powerV);
+            const radiiH = getRadii(powerH); const radiiV = getRadii(powerV);
+            function getSag(x, r) { let val = r*r - x*x; if(val < 0) return r; return r - Math.sqrt(val); }
 
-            function getSag(x, r) { 
-                let val = r*r - x*x;
-                if(val < 0) return r; 
-                return r - Math.sqrt(val); 
-            }
+            const cxH = w * 0.42; const cyH = h / 2;
+            const cxV = w * 0.88; const cyV = h / 2;
 
-            const cxH = isDual ? w * 0.42 : w / 2;
-            const cyH = h / 2;
-            
-            const cxV = w * 0.88;
-            const cyV = h / 2;
-
-            // 邊緣厚度通算 (供防呆警示使用)
             const tNasalCalc = Math.abs((eyeState.ct + getSag(xNasal, radiiH.r2) - getSag(xNasal, radiiH.r1)));
             const tTemporalCalc = Math.abs((eyeState.ct + getSag(xTemporal, radiiH.r2) - getSag(xTemporal, radiiH.r1)));
             const tTopCalc = Math.abs((eyeState.ct + getSag(yTopReal, radiiV.r2) - getSag(yTopReal, radiiV.r1)));
             const tBotCalc = Math.abs((eyeState.ct + getSag(yBotReal, radiiV.r2) - getSag(yBotReal, radiiV.r1)));
             
-            // 尋找全周最薄邊緣
             let minEdge = Math.min(tNasalCalc, tTemporalCalc, tTopCalc, tBotCalc);
-            
-            // 處理 UI 防呆提示
             let eyeKey = type.toLowerCase();
             let warningDiv = document.getElementById(`warning-${eyeKey}`);
             let warnings = [];
 
             if (eyeState.edgeType === 'G' || eyeState.edgeType === 'F') {
-                // 1. 曲折率材質警示 (低於 1.6 易碎)
-                if (eyeState.index < 1.60) {
-                    warnings.push("⚠️ <b>材質過脆：</b>車溝/打孔需高韌性材質，強烈建議選擇 <b>1.60(含)以上</b> (如MR-8)，1.50/1.56 加工易破裂。");
-                }
-                // 2. 邊厚安全警示 (業界車溝/打孔安全厚度基準 1.8mm)
-                let safeEdge = 1.8; 
-                if (minEdge < safeEdge) {
-                    let requiredCT = eyeState.ct + (safeEdge - minEdge);
-                    requiredCT = Math.ceil(requiredCT * 10) / 10; // 向上取整至小數點第一位
-                    warnings.push(`⚠️ <b>邊緣過薄 (${minEdge.toFixed(1)}mm)：</b>不適合車溝/打孔。建議將中心厚度加厚至 <b>${requiredCT.toFixed(1)}mm</b> 以上。<button class="correct-btn" onclick="applySafeCT('${eyeKey}', ${requiredCT})">一鍵校正</button>`);
+                if (eyeState.index < 1.60) warnings.push("⚠️ <b>材質過脆：</b>車溝/打孔需高韌性材質，強烈建議選擇 <b>1.60(含)以上</b>。");
+                if (minEdge < 1.8) {
+                    let reqCT = Math.ceil((eyeState.ct + (1.8 - minEdge)) * 10) / 10; 
+                    warnings.push(`⚠️ <b>邊緣過薄 (${minEdge.toFixed(1)}mm)：</b>建議中心加厚至 <b>${reqCT.toFixed(1)}mm</b> 以上。<button class="correct-btn" onclick="applySafeCT('${eyeKey}', ${reqCT})">一鍵校正</button>`);
                 }
             }
+            warningDiv.innerHTML = warnings.join('<br>');
+            warningDiv.style.display = warnings.length > 0 ? 'block' : 'none';
 
-            if (warnings.length > 0) {
-                warningDiv.innerHTML = warnings.join('<br>');
-                warningDiv.style.display = 'block';
-            } else {
-                warningDiv.style.display = 'none';
-            }
-
-            // ==========================================
-            // 1. 繪製水平橫切面 (Top View)
-            // ==========================================
-            const startXH = Math.min(xNasal, xTemporal);
-            const endXH = Math.max(xNasal, xTemporal);
-            let pointsFrontH = [], pointsBackH = [];
-            const steps = 80; 
+            // --- 繪製水平切面 ---
+            const startXH = Math.min(xNasal, xTemporal); const endXH = Math.max(xNasal, xTemporal);
+            let pointsFrontH = [], pointsBackH = []; const steps = 80; 
             
             for(let i=0; i<=steps; i++) {
                 let x = startXH + (endXH - startXH) * (i / steps);
-                let sag1 = getSag(x, radiiH.r1);
-                let sag2 = getSag(x, radiiH.r2);
-                
-                let yf = cyH - (eyeState.ct / 2) * mmToPx + sag1 * mmToPx;
-                let yb = cyH + (eyeState.ct / 2) * mmToPx + sag2 * mmToPx;
-                
-                pointsFrontH.push({x: cxH + x * mmToPx, y: yf});
-                pointsBackH.push({x: cxH + x * mmToPx, y: yb});
+                let sag1 = getSag(x, radiiH.r1); let sag2 = getSag(x, radiiH.r2);
+                pointsFrontH.push({x: cxH + x * mmToPx, y: cyH - (eyeState.ct / 2) * mmToPx + sag1 * mmToPx});
+                pointsBackH.push({x: cxH + x * mmToPx, y: cyH + (eyeState.ct / 2) * mmToPx + sag2 * mmToPx});
             }
 
             document.getElementById(`metric-nasal-${type.toLowerCase()}`).innerText = tNasalCalc.toFixed(1);
             document.getElementById(`metric-temp-${type.toLowerCase()}`).innerText = tTemporalCalc.toFixed(1);
 
-            ctx.strokeStyle = '#1d2722';
-            ctx.lineWidth = 0.5;
-            let maxLineW = isDual ? w * 0.75 : w;
+            ctx.strokeStyle = '#1d2722'; ctx.lineWidth = 0.5;
+            let maxLineW = w * 0.75;
             for(let g = -50; g <= 50; g += 5) {
                 let pxOffset = cxH + g * mmToPx;
-                if(pxOffset > 0 && pxOffset < maxLineW) {
-                    ctx.beginPath(); ctx.moveTo(pxOffset, 0); ctx.lineTo(pxOffset, h); ctx.stroke();
-                }
+                if(pxOffset > 0 && pxOffset < maxLineW) { ctx.beginPath(); ctx.moveTo(pxOffset, 0); ctx.lineTo(pxOffset, h); ctx.stroke(); }
             }
             
-            ctx.beginPath();
-            ctx.moveTo(pointsFrontH[0].x, pointsFrontH[0].y);
+            ctx.beginPath(); ctx.moveTo(pointsFrontH[0].x, pointsFrontH[0].y);
             for(let i=1; i<pointsFrontH.length; i++) ctx.lineTo(pointsFrontH[i].x, pointsFrontH[i].y);
-
-            let rightEdgeFrontH = pointsFrontH[pointsFrontH.length-1];
-            let rightEdgeBackH = pointsBackH[pointsBackH.length-1];
-            drawEdgeProfilePath(ctx, rightEdgeFrontH, rightEdgeBackH, 1, eyeState.edgeType, eyeState.ratio, mmToPx, false, false);
-
+            drawEdgeProfilePath(ctx, pointsFrontH[pointsFrontH.length-1], pointsBackH[pointsBackH.length-1], 1, eyeState.edgeType, eyeState.ratio, mmToPx, false, false);
             for(let i=pointsBackH.length-1; i>=0; i--) ctx.lineTo(pointsBackH[i].x, pointsBackH[i].y);
-
-            let leftEdgeFrontH = pointsFrontH[0];
-            let leftEdgeBackH = pointsBackH[0];
-            drawEdgeProfilePath(ctx, leftEdgeFrontH, leftEdgeBackH, -1, eyeState.edgeType, eyeState.ratio, mmToPx, true, false);
+            drawEdgeProfilePath(ctx, pointsFrontH[0], pointsBackH[0], -1, eyeState.edgeType, eyeState.ratio, mmToPx, true, false);
             ctx.closePath();
             
             let glassGrad = ctx.createLinearGradient(0, cyH - 40, 0, cyH + 40);
-            if(eyeState.index >= 1.80) {
-                glassGrad.addColorStop(0, 'rgba(150, 210, 230, 0.45)'); glassGrad.addColorStop(0.5, 'rgba(100, 180, 210, 0.25)'); glassGrad.addColorStop(1, 'rgba(150, 210, 230, 0.5)');
-            } else if (eyeState.design !== 'SPH') {
-                glassGrad.addColorStop(0, 'rgba(170, 190, 210, 0.45)'); glassGrad.addColorStop(0.5, 'rgba(130, 160, 180, 0.2)'); glassGrad.addColorStop(1, 'rgba(170, 190, 210, 0.5)');
-            } else {
-                glassGrad.addColorStop(0, 'rgba(160, 200, 180, 0.45)'); glassGrad.addColorStop(0.5, 'rgba(120, 170, 140, 0.2)'); glassGrad.addColorStop(1, 'rgba(160, 200, 180, 0.5)');
-            }
-            ctx.fillStyle = glassGrad; ctx.fill();
-            ctx.lineWidth = 1.0; ctx.strokeStyle = '#8abda5'; ctx.stroke();
+            if(eyeState.index >= 1.80) { glassGrad.addColorStop(0, 'rgba(150, 210, 230, 0.45)'); glassGrad.addColorStop(0.5, 'rgba(100, 180, 210, 0.25)'); glassGrad.addColorStop(1, 'rgba(150, 210, 230, 0.5)'); }
+            else if (eyeState.design !== 'SPH') { glassGrad.addColorStop(0, 'rgba(170, 190, 210, 0.45)'); glassGrad.addColorStop(0.5, 'rgba(130, 160, 180, 0.2)'); glassGrad.addColorStop(1, 'rgba(170, 190, 210, 0.5)'); }
+            else { glassGrad.addColorStop(0, 'rgba(160, 200, 180, 0.45)'); glassGrad.addColorStop(0.5, 'rgba(120, 170, 140, 0.2)'); glassGrad.addColorStop(1, 'rgba(160, 200, 180, 0.5)'); }
+            ctx.fillStyle = glassGrad; ctx.fill(); ctx.lineWidth = 1.0; ctx.strokeStyle = '#8abda5'; ctx.stroke();
 
             ctx.lineWidth = 2.0; ctx.strokeStyle = '#ff3b30'; 
-            ctx.beginPath(); ctx.moveTo(leftEdgeFrontH.x, leftEdgeFrontH.y);
-            drawEdgeProfilePath(ctx, leftEdgeFrontH, leftEdgeBackH, -1, eyeState.edgeType, eyeState.ratio, mmToPx, false, false); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(rightEdgeFrontH.x, rightEdgeFrontH.y);
-            drawEdgeProfilePath(ctx, rightEdgeFrontH, rightEdgeBackH, 1, eyeState.edgeType, eyeState.ratio, mmToPx, false, false); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(pointsFrontH[0].x, pointsFrontH[0].y); drawEdgeProfilePath(ctx, pointsFrontH[0], pointsBackH[0], -1, eyeState.edgeType, eyeState.ratio, mmToPx, false, false); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(pointsFrontH[pointsFrontH.length-1].x, pointsFrontH[pointsFrontH.length-1].y); drawEdgeProfilePath(ctx, pointsFrontH[pointsFrontH.length-1], pointsBackH[pointsBackH.length-1], 1, eyeState.edgeType, eyeState.ratio, mmToPx, false, false); ctx.stroke();
 
             ctx.fillStyle = '#eb5e55'; ctx.beginPath(); ctx.arc(cxH, cyH, 3, 0, 2*Math.PI); ctx.fill();
             
-            if (isDual) {
-                ctx.fillStyle = '#ffffff'; ctx.font = '10px sans-serif'; ctx.textAlign = 'center'; ctx.fillText("水平切面 (Top)", cxH, cyH - 22);
-            }
+            ctx.fillStyle = 'rgba(255,255,255,0.7)'; ctx.font = '10px sans-serif'; ctx.textAlign = 'center'; ctx.fillText("水平切面 (Top)", cxH, cyH - 22);
 
             let tLeftStr = `${(type === 'OD' ? tTemporalCalc : tNasalCalc).toFixed(1)}`;
             let tRightStr = `${(type === 'OD' ? tNasalCalc : tTemporalCalc).toFixed(1)}`;
             ctx.fillStyle = '#a0b0a6'; ctx.font = 'bold 11px sans-serif';
-            ctx.textAlign = 'right'; ctx.fillText(type === 'OD' ? `顳側 ${tLeftStr}` : `鼻側 ${tLeftStr}`, Math.max(leftEdgeFrontH.x - 30, 10), cyH + 5);
-            ctx.textAlign = 'left'; ctx.fillText(type === 'OD' ? `鼻側 ${tRightStr}` : `顳側 ${tRightStr}`, Math.min(rightEdgeFrontH.x + 30, maxLineW), cyH + 5);
+            ctx.textAlign = 'right'; ctx.fillText(type === 'OD' ? `顳側 ${tLeftStr}` : `鼻側 ${tLeftStr}`, Math.max(pointsFrontH[0].x - 30, 10), cyH + 5);
+            ctx.textAlign = 'left'; ctx.fillText(type === 'OD' ? `鼻側 ${tRightStr}` : `顳側 ${tRightStr}`, Math.min(pointsFrontH[pointsFrontH.length-1].x + 30, maxLineW), cyH + 5);
 
-            // ==========================================
-            // 2. 繪製垂直橫切面 (Side View)
-            // ==========================================
-            if (isDual) {
-                let pointsFrontV = [], pointsBackV = [];
-                for(let i=0; i<=steps; i++) {
-                    let yReal = yTopReal - (yTopReal - yBotReal) * (i / steps); 
-                    let sag1 = getSag(yReal, radiiV.r1);
-                    let sag2 = getSag(yReal, radiiV.r2);
-                    
-                    let xf = cxV - (eyeState.ct / 2) * mmToPx + sag1 * mmToPx;
-                    let xb = cxV + (eyeState.ct / 2) * mmToPx + sag2 * mmToPx;
-                    let yScreen = cyV - yReal * mmToPx;
-                    
-                    pointsFrontV.push({x: xf, y: yScreen});
-                    pointsBackV.push({x: xb, y: yScreen});
+            // --- 繪製垂直切面 ---
+            let pointsFrontV = [], pointsBackV = [];
+            for(let i=0; i<=steps; i++) {
+                let yReal = yTopReal - (yTopReal - yBotReal) * (i / steps); 
+                let sag1 = getSag(yReal, radiiV.r1); let sag2 = getSag(yReal, radiiV.r2);
+                
+                if (eyeState.add > 0 && yReal < 0) {
+                    let t = Math.min(Math.abs(yReal) / eyeState.corridor, 1.0);
+                    let blend = (1 - Math.cos(t * Math.PI)) / 2; 
+                    let nearRadii = getRadii(powerV + eyeState.add); 
+                    let nearSag1 = getSag(yReal, nearRadii.r1);
+                    sag1 = sag1 * (1 - blend) + nearSag1 * blend; 
                 }
                 
-                document.getElementById(`metric-top-${type.toLowerCase()}`).innerText = tTopCalc.toFixed(1);
-                document.getElementById(`metric-bot-${type.toLowerCase()}`).innerText = tBotCalc.toFixed(1);
-
-                ctx.beginPath();
-                ctx.moveTo(pointsFrontV[0].x, pointsFrontV[0].y); 
-                for(let i=1; i<pointsFrontV.length; i++) ctx.lineTo(pointsFrontV[i].x, pointsFrontV[i].y);
-
-                let botFrontV = pointsFrontV[pointsFrontV.length-1];
-                let botBackV = pointsBackV[pointsBackV.length-1];
-                drawEdgeProfilePath(ctx, botFrontV, botBackV, 1, eyeState.edgeType, eyeState.ratio, mmToPx, false, true);
-
-                for(let i=pointsBackV.length-1; i>=0; i--) ctx.lineTo(pointsBackV[i].x, pointsBackV[i].y);
-
-                let topFrontV = pointsFrontV[0];
-                let topBackV = pointsBackV[0];
-                drawEdgeProfilePath(ctx, topFrontV, topBackV, -1, eyeState.edgeType, eyeState.ratio, mmToPx, true, true);
-                ctx.closePath();
-                
-                ctx.fillStyle = glassGrad; ctx.fill();
-                ctx.lineWidth = 1.0; ctx.strokeStyle = '#8abda5'; ctx.stroke();
-
-                ctx.lineWidth = 2.0; ctx.strokeStyle = '#ff3b30'; 
-                ctx.beginPath(); ctx.moveTo(topFrontV.x, topFrontV.y);
-                drawEdgeProfilePath(ctx, topFrontV, topBackV, -1, eyeState.edgeType, eyeState.ratio, mmToPx, false, true); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(botFrontV.x, botFrontV.y);
-                drawEdgeProfilePath(ctx, botFrontV, botBackV, 1, eyeState.edgeType, eyeState.ratio, mmToPx, false, true); ctx.stroke();
-
-                ctx.fillStyle = '#eb5e55'; ctx.beginPath(); ctx.arc(cxV, cyV, 3, 0, 2*Math.PI); ctx.fill();
-                
-                ctx.strokeStyle = 'rgba(235, 94, 85, 0.4)'; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
-                ctx.beginPath(); ctx.moveTo(cxV - 30, cyV); ctx.lineTo(cxV + 30, cyV); ctx.stroke(); ctx.setLineDash([]);
-                
-                ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center'; ctx.fillText("垂直切面 (Side)", cxV, cyH - (state.frameB/2)*mmToPx - 25);
-                ctx.fillStyle = '#e67e22'; ctx.font = '10px sans-serif'; ctx.fillText(`EP ${ep}mm`, cxV, cyV - 8);
-
-                ctx.fillStyle = '#a0b0a6'; ctx.font = 'bold 11px sans-serif';
-                ctx.textAlign = 'center'; ctx.fillText(`上緣 ${tTopCalc.toFixed(1)}`, cxV, topFrontV.y - 8);
-                ctx.fillText(`下緣 ${tBotCalc.toFixed(1)}`, cxV, botFrontV.y + 16);
+                pointsFrontV.push({x: cxV - (eyeState.ct / 2) * mmToPx + sag1 * mmToPx, y: cyV - yReal * mmToPx});
+                pointsBackV.push({x: cxV + (eyeState.ct / 2) * mmToPx + sag2 * mmToPx, y: cyV - yReal * mmToPx});
             }
+            
+            document.getElementById(`metric-top-${type.toLowerCase()}`).innerText = tTopCalc.toFixed(1);
+            document.getElementById(`metric-bot-${type.toLowerCase()}`).innerText = tBotCalc.toFixed(1);
 
-            ctx.font = 'bold 16px sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.textAlign = 'center';
+            ctx.beginPath(); ctx.moveTo(pointsFrontV[0].x, pointsFrontV[0].y); 
+            for(let i=1; i<pointsFrontV.length; i++) ctx.lineTo(pointsFrontV[i].x, pointsFrontV[i].y);
+            drawEdgeProfilePath(ctx, pointsFrontV[pointsFrontV.length-1], pointsBackV[pointsBackV.length-1], 1, eyeState.edgeType, eyeState.ratio, mmToPx, false, true);
+            for(let i=pointsBackV.length-1; i>=0; i--) ctx.lineTo(pointsBackV[i].x, pointsBackV[i].y);
+            drawEdgeProfilePath(ctx, pointsFrontV[0], pointsBackV[0], -1, eyeState.edgeType, eyeState.ratio, mmToPx, true, true);
+            ctx.closePath();
+            
+            ctx.fillStyle = glassGrad; ctx.fill(); ctx.lineWidth = 1.0; ctx.strokeStyle = '#8abda5'; ctx.stroke();
+
+            ctx.lineWidth = 2.0; ctx.strokeStyle = '#ff3b30'; 
+            ctx.beginPath(); ctx.moveTo(pointsFrontV[0].x, pointsFrontV[0].y); drawEdgeProfilePath(ctx, pointsFrontV[0], pointsBackV[0], -1, eyeState.edgeType, eyeState.ratio, mmToPx, false, true); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(pointsFrontV[pointsFrontV.length-1].x, pointsFrontV[pointsFrontV.length-1].y); drawEdgeProfilePath(ctx, pointsFrontV[pointsFrontV.length-1], pointsBackV[pointsBackV.length-1], 1, eyeState.edgeType, eyeState.ratio, mmToPx, false, true); ctx.stroke();
+
+            ctx.fillStyle = '#eb5e55'; ctx.beginPath(); ctx.arc(cxV, cyV, 3, 0, 2*Math.PI); ctx.fill();
+            ctx.strokeStyle = 'rgba(235, 94, 85, 0.4)'; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+            ctx.beginPath(); ctx.moveTo(cxV - 30, cyV); ctx.lineTo(cxV + 30, cyV); ctx.stroke(); ctx.setLineDash([]);
+            
+            ctx.fillStyle = 'rgba(255,255,255,0.7)'; ctx.textAlign = 'center'; ctx.fillText("垂直切面 (Side)", cxV, cyH - (state.frameB/2)*mmToPx - 25);
+            ctx.fillStyle = '#e67e22'; ctx.font = '10px sans-serif'; ctx.fillText(`EP ${ep}mm`, cxV, cyV - 8);
+            ctx.fillStyle = '#a0b0a6'; ctx.font = 'bold 11px sans-serif';
+            ctx.textAlign = 'center'; ctx.fillText(`上緣 ${tTopCalc.toFixed(1)}`, cxV, pointsFrontV[0].y - 8);
+            ctx.fillText(`下緣 ${tBotCalc.toFixed(1)}`, cxV, pointsFrontV[pointsFrontV.length-1].y + 16);
+
+            ctx.font = 'bold 16px sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.05)'; ctx.textAlign = 'center';
             let designText = eyeState.design === 'SPH' ? '球面 Spherical' : (eyeState.design === 'ASP' ? '非球面 Aspheric' : '雙非 Double-Asph');
             ctx.fillText(designText, cxH, h - 15);
         }
 
         function drawEdgeProfilePath(ctx, frontPt, backPt, direction, type, ratio, mmToPx, isReverse, isVertical) {
             if(isVertical) {
-                const edgeThicknessPx = backPt.x - frontPt.x;
-                const midX = frontPt.x + edgeThicknessPx * ratio;
-                const edgeWidthPx = 0.8 * mmToPx; 
-
+                const edgeThicknessPx = backPt.x - frontPt.x; const midX = frontPt.x + edgeThicknessPx * ratio; const edgeWidthPx = 0.8 * mmToPx; 
                 if (type === 'V') {
-                    let peakY = frontPt.y + direction * edgeWidthPx;
-                    let vBasePx = 1.5 * mmToPx; 
-                    let vStart = midX - vBasePx / 2;
-                    let vEnd = midX + vBasePx / 2;
-                    
-                    let minX = Math.min(frontPt.x, backPt.x);
-                    let maxX = Math.max(frontPt.x, backPt.x);
-                    vStart = clamp(vStart, minX, maxX);
-                    vEnd = clamp(vEnd, minX, maxX);
-
-                    if (isReverse) {
-                        ctx.lineTo(vEnd, frontPt.y);    
-                        ctx.lineTo(midX, peakY);        
-                        ctx.lineTo(vStart, frontPt.y);  
-                        ctx.lineTo(frontPt.x, frontPt.y); 
-                    } else {
-                        ctx.lineTo(vStart, frontPt.y);  
-                        ctx.lineTo(midX, peakY);        
-                        ctx.lineTo(vEnd, frontPt.y);    
-                        ctx.lineTo(backPt.x, backPt.y); 
-                    }
+                    let peakY = frontPt.y + direction * edgeWidthPx; let vBasePx = 1.5 * mmToPx; 
+                    let vStart = clamp(midX - vBasePx / 2, Math.min(frontPt.x, backPt.x), Math.max(frontPt.x, backPt.x));
+                    let vEnd = clamp(midX + vBasePx / 2, Math.min(frontPt.x, backPt.x), Math.max(frontPt.x, backPt.x));
+                    if (isReverse) { ctx.lineTo(vEnd, frontPt.y); ctx.lineTo(midX, peakY); ctx.lineTo(vStart, frontPt.y); ctx.lineTo(frontPt.x, frontPt.y); } 
+                    else { ctx.lineTo(vStart, frontPt.y); ctx.lineTo(midX, peakY); ctx.lineTo(vEnd, frontPt.y); ctx.lineTo(backPt.x, backPt.y); }
                 } else if (type === 'G') {
-                    let grooveInY = frontPt.y - direction * (0.6 * mmToPx);
-                    let grooveWidthPx = 0.8 * mmToPx; 
-                    
-                    let gStart = midX - grooveWidthPx / 2;
-                    let gEnd = midX + grooveWidthPx / 2;
-
-                    if (isReverse) {
-                        ctx.lineTo(gEnd, frontPt.y);
-                        ctx.lineTo(gEnd, grooveInY);
-                        ctx.lineTo(gStart, grooveInY);
-                        ctx.lineTo(gStart, frontPt.y);
-                        ctx.lineTo(frontPt.x, frontPt.y);
-                    } else {
-                        ctx.lineTo(gStart, frontPt.y);
-                        ctx.lineTo(gStart, grooveInY);
-                        ctx.lineTo(gEnd, grooveInY);
-                        ctx.lineTo(gEnd, frontPt.y);
-                        ctx.lineTo(backPt.x, backPt.y);
-                    }
-                } else {
-                    ctx.lineTo(isReverse ? frontPt.x : backPt.x, isReverse ? frontPt.y : backPt.y);
-                }
+                    let grooveInY = frontPt.y - direction * (0.6 * mmToPx); let grooveWidthPx = 0.8 * mmToPx; 
+                    let gStart = midX - grooveWidthPx / 2; let gEnd = midX + grooveWidthPx / 2;
+                    if (isReverse) { ctx.lineTo(gEnd, frontPt.y); ctx.lineTo(gEnd, grooveInY); ctx.lineTo(gStart, grooveInY); ctx.lineTo(gStart, frontPt.y); ctx.lineTo(frontPt.x, frontPt.y); } 
+                    else { ctx.lineTo(gStart, frontPt.y); ctx.lineTo(gStart, grooveInY); ctx.lineTo(gEnd, grooveInY); ctx.lineTo(gEnd, frontPt.y); ctx.lineTo(backPt.x, backPt.y); }
+                } else { ctx.lineTo(isReverse ? frontPt.x : backPt.x, isReverse ? frontPt.y : backPt.y); }
             } else {
-                const edgeThicknessPx = backPt.y - frontPt.y;
-                const midY = frontPt.y + edgeThicknessPx * ratio;
-                const edgeWidthPx = 0.8 * mmToPx; 
-
+                const edgeThicknessPx = backPt.y - frontPt.y; const midY = frontPt.y + edgeThicknessPx * ratio; const edgeWidthPx = 0.8 * mmToPx; 
                 if (type === 'V') {
-                    let peakX = frontPt.x + direction * edgeWidthPx;
-                    let vBasePx = 1.5 * mmToPx; 
-                    
-                    let y1, y2;
-                    if (frontPt.y < backPt.y) {
-                        y1 = midY - vBasePx / 2;
-                        y2 = midY + vBasePx / 2;
-                    } else {
-                        y1 = midY + vBasePx / 2;
-                        y2 = midY - vBasePx / 2;
-                    }
-
-                    let minY = Math.min(frontPt.y, backPt.y);
-                    let maxY = Math.max(frontPt.y, backPt.y);
-                    y1 = clamp(y1, minY, maxY);
-                    y2 = clamp(y2, minY, maxY);
-
-                    if (isReverse) {
-                        ctx.lineTo(frontPt.x, y2);
-                        ctx.lineTo(peakX, midY);
-                        ctx.lineTo(frontPt.x, y1);
-                        ctx.lineTo(frontPt.x, frontPt.y);
-                    } else {
-                        ctx.lineTo(frontPt.x, y1);
-                        ctx.lineTo(peakX, midY);
-                        ctx.lineTo(frontPt.x, y2);
-                        ctx.lineTo(backPt.x, backPt.y);
-                    }
+                    let peakX = frontPt.x + direction * edgeWidthPx; let vBasePx = 1.5 * mmToPx; 
+                    let y1 = clamp(midY - vBasePx / 2, Math.min(frontPt.y, backPt.y), Math.max(frontPt.y, backPt.y));
+                    let y2 = clamp(midY + vBasePx / 2, Math.min(frontPt.y, backPt.y), Math.max(frontPt.y, backPt.y));
+                    if (frontPt.y >= backPt.y) { [y1, y2] = [y2, y1]; }
+                    if (isReverse) { ctx.lineTo(frontPt.x, y2); ctx.lineTo(peakX, midY); ctx.lineTo(frontPt.x, y1); ctx.lineTo(frontPt.x, frontPt.y); } 
+                    else { ctx.lineTo(frontPt.x, y1); ctx.lineTo(peakX, midY); ctx.lineTo(frontPt.x, y2); ctx.lineTo(backPt.x, backPt.y); }
                 } else if (type === 'G') {
-                    let grooveInX = frontPt.x - direction * (0.6 * mmToPx);
-                    let grooveWidthPx = 0.8 * mmToPx;
-                    
-                    let y1, y2;
-                    if (frontPt.y < backPt.y) {
-                        y1 = midY - grooveWidthPx / 2;
-                        y2 = midY + grooveWidthPx / 2;
-                    } else {
-                        y1 = midY + grooveWidthPx / 2;
-                        y2 = midY - grooveWidthPx / 2;
-                    }
-
-                    if (isReverse) {
-                        ctx.lineTo(frontPt.x, y2);
-                        ctx.lineTo(grooveInX, y2);
-                        ctx.lineTo(grooveInX, y1);
-                        ctx.lineTo(frontPt.x, y1);
-                        ctx.lineTo(frontPt.x, frontPt.y);
-                    } else {
-                        ctx.lineTo(frontPt.x, y1);
-                        ctx.lineTo(grooveInX, y1);
-                        ctx.lineTo(grooveInX, y2);
-                        ctx.lineTo(frontPt.x, y2);
-                        ctx.lineTo(backPt.x, backPt.y);
-                    }
-                } else {
-                    ctx.lineTo(isReverse ? frontPt.x : backPt.x, isReverse ? frontPt.y : backPt.y);
-                }
+                    let grooveInX = frontPt.x - direction * (0.6 * mmToPx); let grooveWidthPx = 0.8 * mmToPx;
+                    let y1 = midY - grooveWidthPx / 2; let y2 = midY + grooveWidthPx / 2;
+                    if (frontPt.y >= backPt.y) { [y1, y2] = [y2, y1]; }
+                    if (isReverse) { ctx.lineTo(frontPt.x, y2); ctx.lineTo(grooveInX, y2); ctx.lineTo(grooveInX, y1); ctx.lineTo(frontPt.x, y1); ctx.lineTo(frontPt.x, frontPt.y); } 
+                    else { ctx.lineTo(frontPt.x, y1); ctx.lineTo(grooveInX, y1); ctx.lineTo(grooveInX, y2); ctx.lineTo(frontPt.x, y2); ctx.lineTo(backPt.x, backPt.y); }
+                } else { ctx.lineTo(isReverse ? frontPt.x : backPt.x, isReverse ? frontPt.y : backPt.y); }
             }
         }
     </script>
